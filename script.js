@@ -34,34 +34,34 @@ const MISSION_BRIEFERS = {
 
 const BRIEF = {
     intro: {
-        post_mission_concern: "Excelente trabajo, Agente. Has restaurado la Confidencialidad. Pero la brecha original es más profunda. La Dra. Vega cree que hay un 'Código Fantasma' operando dentro de ATLAS, alguien que conoce bien los sistemas y que podría estar corrompiendo a otros. Debemos analizar al personal. Ve a la **Oficina de Reclutamiento** para investigar a las nuevas incorporaciones. 🤔 Aguarda! un rastro sospechoso letra ** C **, ¿será relevante?     ",
-        description: "Agente. Me presento, soy la Dra. Vega, Directora General. Mi principal preocupación en este momento es una anomalía detectada en el flujo de información de ATLAS. Para comprender la gravedad, es vital que entiendas los cimientos de nuestra seguridad: la **Tríada C.I.D.** Esta tríada es el modelo fundamental que rige cómo protegemos nuestros activos más valiosos. Se compone de tres pilares: **Confidencialidad**, que asegura que solo quienes deben ver la información puedan hacerlo; **Integridad**, que garantiza que la información es exacta e inalterable, y **Disponibilidad**, que asegura que nuestros sistemas y datos estén accesibles cuando los necesitamos. Tu primera tarea es demostrar que comprendes estos principios vitales, no solo para ATLAS, sino también para tu propia vida digital.",
+        post_mission_concern: "Bien, Agente. Volvimos a poner límites (Confidencialidad) y el curso de CREA quedó bajo control. Pero el problema no terminó: alguien sigue moviéndose por canales del liceo como si tuviera permiso. Siguiente parada: **Adscripción**. Necesitamos mirar conductas y perfiles. 🤔 Te queda una letra suelta: **C**.",
+        description: "Agente, soy la Dra. Vega. En el liceo detectamos una anomalía: accesos raros a cursos en **CREA** y cambios en archivos compartidos. Para entender qué está en juego, necesitás dominar la **Tríada C.I.D.**: **Confidencialidad** (quién puede ver), **Integridad** (qué tan fiel es la info) y **Disponibilidad** (si está accesible cuando se necesita). Tu primera tarea es demostrar que podés aplicarlo a situaciones reales del liceo.",
         // NUEVO CAMPO:
-        diaryClue: "Misión 1: Detecté un rastro anómalo en el sector dirección. Una letra solitaria: **C**."
+        diaryClue: "Misión 1: Primer rastro en Dirección/CREA. Una letra: **C**."
     },
     hackers: {
-       post_mission_concern: "Has identificado a un sospechoso. Bien. Pero la historia no termina ahí. Recientes intentos de 'Credential Stuffing' han sido detectados, alguien está probando contraseñas robadas. Necesitamos entender cómo se protegen las identidades digitales. Hay una habitación de pruebas con fallos de autenticación que debes explorar. Ve a la **Oficina de Identidad Digital**. 🤔 Recibes otra letra: ** O **, ¿casualidad?  ",
-        description: "Agente, el problema se complica. Hay un 'Código Fantasma' operando dentro de ATLAS, alguien con acceso y conocimientos internos. Mi preocupación es que podría ser una de nuestras nuevas incorporaciones. Debemos entender que no todos los 'hackers' son iguales; hay quienes buscan proteger (Sombreros Blancos), quienes operan en la ambigüedad (Sombreros Grises) y quienes buscan el daño (Sombreros Negros). Es vital discernir sus intenciones para proteger nuestra red. Analiza estos perfiles y clasifica a cada agente. Luego, y esto es crucial, elige a tu Sospechoso Principal. Tu elección activará la siguiente fase de nuestra investigación.",
+       post_mission_concern: "Elegiste un sospechoso, bien. Ahora toca lo más común: alguien está intentando entrar a cuentas (Gmail/CREA) probando claves recicladas. Vamos a la **Sala de Informática** a revisar buenas prácticas de contraseñas y MFA. 🤔 Te queda otra letra: **O**.",
+        description: "Agente: en Adscripción vimos comportamientos distintos. No todo el que “toquetea” sistemas tiene la misma intención. Clasificamos perfiles (blanco/gris/negro) para entender el riesgo y decidir un sospechoso, como harías ante un incidente real en un liceo.",
         // NUEVO CAMPO:
-        diaryClue: "Misión 2: Tras analizar los perfiles de los hackers, apareció otro fragmento: **O**."
+        diaryClue: "Misión 2: Adscripción dejó otro fragmento: **O**."
     },
     credenciales: {
         pistaIntriga: "** 🚨** Se halló un borrador de correo con terminología de **rescate de datos** en la cuenta del Agente Leo. / Un acceso remoto inesperado fue detectado desde una **dirección MAC estática** en la red de invitados. 🤔 una nota que te llama la atención ** RR **",
-        post_mission_concern: "Has fortalecido las defensas de identidad, Agente. Pero la amenaza es más sutil. El Agente Phish está alarmado por una serie de sucesos extraños en Seguridad Interna, incidentes donde parece que la gente 'simplemente entregó' información. Debemos aprender a protegernos de la manipulación. Ve a la **Oficina de Seguridad Interna**. ",
-        description: "Agente, hemos contenido un intento masivo de 'Credential Stuffing' gracias a nuestra Autenticación Multifactor (MFA). Pero la realidad es que no todas tus cuentas personales tienen esta protección. La MFA es una capa de seguridad vital que exige dos o más pruebas para verificar tu identidad: algo que sabes (tu contraseña), algo que tienes (un código de tu móvil) o algo que eres (tu huella dactilar). Mi preocupación es que sin ella, tus cuentas son vulnerables. Para continuar, deberás explorar una 'habitación oscura' de nuestro sistema de pruebas. Deberás descifrarlo para obtener la clave numérica de 4 cifras que restaurará el acceso a un sistema de credenciales crítico.",
+        post_mission_concern: "Perfecto: con MFA y claves más fuertes, bajamos muchísimo el riesgo. Pero el ataque más fácil sigue siendo convencerte. Próximo: **Seguridad Interna** (mensajes por Gmail, QR, cadenas).",
+        description: "Agente, el 'credential stuffing' no es una película: pasa cuando alguien prueba combinaciones robadas en servicios como **Gmail** o plataformas educativas. La **MFA** agrega una segunda prueba y corta el ataque. Tu tarea es resolver un desafío corto para obtener el código de 4 cifras.",
         // NUEVO CAMPO:
         diaryClue: "Misión 3: Encontré una nota extraña durante la crisis de credenciales. Dice: **RR**."
     },
     ing_social: {
         pistaIntriga: "** 🚨** El malware usa un protocolo diseñado para dispositivos de **bajo consumo y simple procesamiento**. / La Agente Vega ha accedido a la base de datos de Becas (M1) más de 12 veces esta semana. ¡Demasiadas veces! ¿no? 🤔 Alguien quiere decirnos algo: ** E **",
-        post_mission_concern: "La ingeniería social es una debilidad crítica, Agente. Pero hay algo más que me preocupa... La empresa ha estado invirtiendo mucho en tecnología IoT para mejorar la eficiencia, pero dudo que estén implementando las medidas de seguridad correctas. El 'Código Fantasma' podría explotar esto. Ve a la **Oficina de Innovación (IoT)** para una auditoría de seguridad. ",
-        description: "Agente, estoy seriamente preocupado por una serie de incidentes que no encajan con los patrones de ataques habituales. No son fallas de software o contraseñas débiles. Es como si a la gente... simplemente se la hubiera manipulado para que hiciera cosas que no debía. Esto es Ingeniería Social, el arte oscuro de la persuasión. Los atacantes explotan nuestra confianza, nuestra curiosidad, nuestro miedo, o sobre todo, nuestra **urgencia**, para que les demos información o hagamos clic donde no debemos. Necesito que converses con nuestro chatbot de simulación de buenas prácticas. Aprende a identificar las maniobras y, al finalizar el entrenamiento, obtendrás la clave.",
+        post_mission_concern: "Bien ahí. Si frenás la urgencia, frenás el phishing. Último tramo: **Innovación** (WiFi del liceo, dispositivos y 'cosas conectadas').",
+        description: "Agente, acá aparece lo típico del liceo: mails que piden “clave ya”, QR en un afiche, o un video en YouTube que te manda a un link raro. Eso es **Ingeniería Social**. La clave es reconocer la urgencia y verificar antes de hacer clic.",
         // NUEVO CAMPO:
         diaryClue: "Misión 4: Entre los intentos de manipulación social, aislé un carácter más: **E**."
     },
     iot: {
-       post_mission_concern: "Has neutralizado las vulnerabilidades del IoT, Agente. La red está más segura, pero el rastro del 'Código Fantasma' nos ha llevado a un punto crítico. Ahora, con toda la información, debes tomar la decisión final. ¿Quién es el verdadero Código Fantasma? ¿El factor humano o el sistémico? Tu elección sellará el destino de ATLAS. 🤔 ** A ** ??? ¿Qué significa??",
-        description: "Agente, hemos llegado al último punto. En ATLAS, hemos abrazado la tecnología IoT (Internet de las Cosas) para optimizar procesos, desde el control ambiental hasta la seguridad perimetral con cámaras inteligentes. Esto nos permite una eficiencia sin precedentes. Pero mi gran preocupación es que, si no se usan correctamente, estas tecnologías nos exponen a nuevos riesgos. Recuerdo que, durante la instalación de una de las cámaras en un sector remoto, el técnico a cargo me comentó algo inquietante: —“Por defecto, la clave inicial de ese modelo es NODE.“ ¿La habrá cambiado? ¿O seguimos expuestos, sin saberlo? 🧩 El Código Fantasma logró infiltrarse. Algo falló, agente... y necesitamos descubrir qué fue. ",
+       post_mission_concern: "Excelente. Cerramos el último frente y juntamos todas las pistas. Ahora, con todo lo visto, hacemos cierre en clase: ¿qué falló realmente, una persona o el sistema? 🤔 Última letra: **A**.",
+        description: "Agente, último caso: el liceo tiene WiFi, cámaras, proyectores, impresoras, y dispositivos conectados. Si quedan con claves por defecto o mal configurados, son una puerta. Investigá la vulnerabilidad y juntá la última pista.",
         // NUEVO CAMPO:
         diaryClue: "Misión 5: La vulnerabilidad IoT escondía la pieza final: **A**."
     }
@@ -883,12 +883,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p style="color: var(--primary);"><strong>📩 INFORME FINAL DISPONIBLE:</strong></p>
                 <button id="btn-show-ending-video" class="btn primary" style="width: 100%; max-width: 400px; margin-bottom: 15px;">▶ REPRODUCIR VIDEO FINAL</button>
                 <div id="ending-video-container"></div>
-                
-                <br>
-                <p style="color: var(--accent); margin-top: 20px;"><strong>⚠️ ALERTA DE SISTEMA:</strong></p>
-                <p>Se ha detectado un sector corrupto (Sector 6). Se requiere intervención docente.</p>
-                
-                <button id="btn-open-mission6-modal" class="btn success" style="border: 2px solid var(--accent);">🔓 DESBLOQUEAR SECTOR 6</button>
             </div>
         `;
         
@@ -906,25 +900,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('btn-show-ending-video')?.addEventListener('click', (e) => {
                 e.target.style.display = 'none';
                 loadYoutubeVideo('ending-video-container', 'uI_Hx99ekBo', true); // <--- AQUÍ ACTIVAMOS EL SONIDO
-            });
-
-            // Modal Misión 6
-            document.getElementById('btn-open-mission6-modal')?.addEventListener('click', () => {
-                const modalContent = `
-                    <div style="text-align:center;">
-                        <h2 style="color:var(--accent);">⚠️ PROTOCOLO ARQUITECTO ACTIVADO</h2>
-                        <img src="vega.png" style="width:100px; border-radius:50%; border:3px solid var(--primary); margin:10px auto;">
-                        <p style="font-size:1.1em; text-align:justify;">
-                            "Agente, ya sea que hayas acertado o fallado, ATLAS te necesita. 
-                            Hemos encontrado un área vacía: el <strong>Sector 6</strong>.
-                            Tu misión ahora no es jugar, sino <strong>CREAR</strong>."
-                        </p>
-                        <p><strong>Objetivo:</strong> Diseñar una experiencia gamificada.</p>
-                        <br>
-                        <a href="mission6.html" target="_blank" class="btn primary" style="font-size:1.2em; text-decoration:none;">🚀 IR AL HACKATHON</a>
-                    </div>
-                `;
-                showModal("NUEVA MISIÓN DESBLOQUEADA", modalContent, true);
             });
         }, 100);
 

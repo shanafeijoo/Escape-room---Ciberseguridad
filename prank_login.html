@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Advertencia de Seguridad!</title>
+    <title>Verificación rápida (Liceo)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
@@ -13,6 +13,7 @@
             --primary: #ffeb3b; /* Amarillo para la alerta */
             --error: #f44336; /* Rojo para el hackeo */
             --dark-bg: #0f0f1b;
+            --success: #4caf50;
         }
 
         body {
@@ -103,51 +104,64 @@
 </head>
 <body>
 
-    <!-- PANTALLA 1: LOGIN TRAMPA -->
+    <!-- PANTALLA 1: FORMULARIO (SIMULACIÓN) -->
     <div id="phishing-form" class="login-container">
+        <h1 class="text-xl font-bold text-yellow-300" style="margin:0 0 10px 0;">Acceso a recursos del liceo</h1>
+        <p class="text-sm" style="opacity:.9; margin:0 0 20px 0;">
+            Verificación rápida para abrir materiales en <strong>CREA</strong> y recibir el enlace por <strong>Gmail</strong>.
+        </p>
         <form id="prank-form">
             <div class="input-group">
-                <label for="nombre">Nombre Completo y Apellido:</label>
-                <input type="text" id="nombre" name="nombre" required placeholder="Ej: María Pérez">
+                <label for="usuario">Usuario (alias o mail):</label>
+                <input type="text" id="usuario" name="usuario" required placeholder="Ej: aperez / nombre.apellido@...">
             </div>
 
             <div class="input-group">
-                <label for="cedula">Cédula:</label>
-                <!-- Usamos textarea para que parezca que pide mucha info, como un formulario largo -->
-                <textarea id="cedula" name="cedula" rows="3" required placeholder="Escriba aquí su número de cédula, teléfono o información de contacto por seguridad"></textarea>
+                <label for="clave">Clave:</label>
+                <input type="password" id="clave" name="clave" required placeholder="(No uses una contraseña real)">
             </div>
 
-            <button type="submit" class="btn">Continuar y Validar Datos</button>
+            <button type="submit" class="btn">Continuar</button>
+            <p class="text-xs" style="opacity:.75; margin:12px 0 0 0; text-align:left;">
+                Nota: esto es una <strong>simulación educativa</strong>.
+            </p>
         </form>
     </div>
 
     <!-- PANTALLA 2: RESULTADO DE LA BROMA -->
     <div id="hack-result" class="result-screen">
-        <h2 class="text-red-500 font-bold">¡HACKEADO!</h2>
+        <h2 class="text-red-500 font-bold">Ups…</h2>
         
-        <p class="text-xl text-yellow-300">¡UYY PROFE! Lo sentimos mucho... ¡Hemos sido hackeados!</p>
-        <p>Parece que el "Código Fantasma" se llevó todos sus juicios de APEs. ¡Deberá volver a ingresar al portafolio nuevamente! jajaja</p>
+        <p class="text-xl text-yellow-300">Acabás de entrar a una pantalla que <em>podría</em> ser falsa.</p>
+        <p style="text-align:justify;">
+            En un liceo, esto pasa con links que llegan por <strong>Gmail</strong>, QR pegados en el pasillo, o mensajes reenviados.
+            La idea no es asustar: es entrenar el ojo.
+        </p>
         
-        <!-- GIF de broma de YouTube (Ejemplo de Rickroll) -->
-        <div style="width:100%;height:0;padding-bottom:45%;position:relative;"><iframe src="https://giphy.com/embed/oVvhEYvWDvE1G" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div>
+        <!-- Un gesto visual leve (sin "rickroll" explícito) -->
+        <div style="width:100%;height:0;padding-bottom:45%;position:relative;">
+            <iframe src="https://giphy.com/embed/oVvhEYvWDvE1G" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+        </div>
 
         <div class="tip mt-4 text-sm">
-            <p class="font-bold text-yellow-500 mb-2">💡 OJO: LECCIÓN APRENDIDA</p>
+            <p class="font-bold text-yellow-500 mb-2">💡 Lo importante</p>
             <p>
-                <strong>Atención con los QR que escaneás y los enlaces que abrís.</strong> 
-                Acabás de ser parte de un ejercicio de Ingeniería Social. 
-                En este entorno estás seguro/a, pero si ingresaste datos reales, 
-                recordá que <strong>nunca debés proporcionar información sensible</strong> 
-                sin verificar la fuente.
+                <strong>No ingreses contraseñas reales</strong> cuando no verificás la fuente.
+                Antes de escribir nada: mirá el dominio, quién lo envió, y si el pedido tiene sentido.
             </p>
         </div>
 
-        <button id="btn-start-game" class="btn bg-green-500 hover:bg-green-700 mt-4">¡Ya me asusté, iniciar el Escape Room de verdad!</button>
+        <button id="btn-start-game" class="btn bg-green-500 hover:bg-green-700 mt-4">Entrar al Escape Room</button>
     </div>
 
     <script>
+        const FLAG = 'ebi_prank_done_v1';
+
         document.getElementById('prank-form').addEventListener('submit', function(e) {
             e.preventDefault();
+
+            // Marcar que la simulación ya se mostró (para no repetirla al recargar)
+            try { localStorage.setItem(FLAG, '1'); } catch (_) {}
             
             // Ocultar la pantalla de phishing
             document.getElementById('phishing-form').style.display = 'none';
@@ -158,6 +172,7 @@
         });
 
         document.getElementById('btn-start-game').addEventListener('click', function() {
+            try { localStorage.setItem(FLAG, '1'); } catch (_) {}
             // FIX: Usar window.location.replace para una navegación más robusta
             // Redirigir al archivo principal del Escape Room
             window.location.replace('game.html'); 

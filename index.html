@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciando Protocolo ATLAS</title>
-    <!-- REDIRECCIÓN INMEDIATA AL PRÓLOGO (LA BROMA) -->
+    <title>Iniciando Operación Aula Segura</title>
+    <!-- Redirección al prólogo (actividad corta). Si ya se completó una vez, no se repite. -->
     <script>
-        // Esta línea es la única función de este archivo: asegura que la broma se cargue primero.
-        // Se añade './' para asegurar que la ruta relativa sea interpretada correctamente en entornos estrictos.
-        window.location.replace('./prank_login.html');
+        (function () {
+            const FLAG = 'ebi_prank_done_v1';
+            const next = localStorage.getItem(FLAG) === '1' ? './game.html' : './prank_login.html';
+            window.location.replace(next);
+        })();
     </script>
 </head>
 <body style="background-color: #1a1a2e; color: #fff; text-align: center; padding-top: 50px; font-family: monospace;">
-    <h1>Cargando Protocolo de Inicio...</h1>
-    <p>Si la redirección no funciona, por favor abra el archivo 'prank_login.html'.</p>
+    <h1>Cargando Operación Aula Segura...</h1>
+    <p>Si la redirección no funciona, abrí <strong>game.html</strong>.</p>
 </body>
 </html>

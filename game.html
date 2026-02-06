@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Operación Firewall: ATLAS</title>
+    <title>Operación Aula Segura (Liceo)</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -11,11 +11,13 @@
     <canvas id="gridbg" aria-hidden="true"></canvas>
 
     <section id="screen-start" class="screen active">
-        <h1 class="glitch" data-text="INSTITUTO ATLAS">INSTITUTO ATLAS</h1>
-        <h2>Operación Firewall: Agente Anónimo</h2>
+        <h1 class="glitch" data-text="LICEO">LICEO</h1>
+        <h2>Operación Aula Segura: Agente EBI</h2>
         <p class="intro-text">
-            Montevideo, 03 de diciembre del 2025 <br/>
-            Agente, el Instituto ATLAS está comprometido. Una amenaza silenciosa, que llamo el 'Código Fantasma', ha penetrado nuestros sistemas. No confíes en nadie. Te he citado aquí de forma anónima para que actúes. Tu misión es navegar por los sectores críticos de ATLAS, identificar las brechas y, lo más importante, aprender de cada una para protegerte a ti mismo en el mundo digital. Cada misión completada te dará acceso a nuevas áreas. Al final, deberás identificar al Código Fantasma. El futuro de ATLAS, y la seguridad de tu propia vida digital, dependen de tus decisiones.`
+            Montevideo, 2026 <br/>
+            Agente, en el liceo empezó a circular información rara: capturas de chats, tareas cambiadas en documentos compartidos, y mensajes por Gmail pidiendo claves “por urgencia”.
+            Esto no es ciencia ficción: es vida real. Tu misión es recorrer 5 situaciones típicas del liceo (usando herramientas como <strong>CREA</strong>, <strong>Gmail</strong>, <strong>WPS</strong> y micro-videos de <strong>YouTube</strong>), y aplicar buenas prácticas para proteger tu vida digital.
+            Cada misión completada desbloquea la siguiente. Al final, cerramos el caso con una reflexión guiada (sin misión 6). 
         </p>
         <button class="btn primary" id="btn-start">Acceder al Mapa de Operaciones</button>
     </section>
@@ -29,60 +31,55 @@
 
         <main class="content-wrapper">
             <div id="screen-map" class="sub-screen active">
-                <h2>📁 Mapa de Operaciones - Sectores de ATLAS</h2>
+                <h2>📁 Mapa de Operaciones - Liceo</h2>
 
                 <div class="folder-grid">
                     <div class="folder" data-mission-id="intro" aria-disabled="false">
                         <h3>1. Dirección</h3>
-                        <p class="muted">Principio C.I.D.</p>
+                        <p class="muted">C.I.D. aplicado a CREA</p>
                         <div class="mission-avatar-container"></div>
                         <p class="mission-status">Pendiente</p>
                         <button class="btn secondary" data-target-screen="mission1">Acceder</button>
                     </div>
 
                     <div class="folder" data-mission-id="hackers" aria-disabled="true">
-                        <h3>2. Reclutamiento</h3>
-                        <p class="muted">Análisis de Amenazas (Hacker)</p>
+                        <h3>2. Adscripción</h3>
+                        <p class="muted">Perfiles y conducta digital</p>
                         <div class="mission-avatar-container"></div>
                         <p class="mission-status">Pendiente</p>
                         <button class="btn secondary" data-target-screen="mission2">Acceder</button>
                     </div>
 
                     <div class="folder" data-mission-id="credenciales" aria-disabled="true">
-                        <h3>3. Identidad Digital</h3>
-                        <p class="muted">Credenciales y MFA</p>
+                        <h3>3. Sala de Informática</h3>
+                        <p class="muted">Claves y MFA (Gmail/CREA)</p>
                         <div class="mission-avatar-container"></div>
                         <p class="mission-status">Pendiente</p>
                         <button class="btn secondary" data-target-screen="mission3">Acceder</button>
                     </div>
                     <div class="folder" data-mission-id="ing_social" aria-disabled="true">
-                        <h3>4. Seguridad Interna</h3>
-                        <p class="muted">Ingeniería Social</p>
+                        <h3>4. Grupo de Clase</h3>
+                        <p class="muted">Ingeniería social (mensajes/QR)</p>
                         <div class="mission-avatar-container"></div>
                         <p class="mission-status">Pendiente</p>
                         <button class="btn secondary" data-target-screen="mission4">Acceder</button>
                     </div>
                     <div class="folder" data-mission-id="iot" aria-disabled="true">
-                        <h3>5. Innovación</h3>
-                        <p class="muted">Vulnerabilidad IoT</p>
+                        <h3>5. WiFi del Liceo</h3>
+                        <p class="muted">Dispositivos conectados</p>
                         <div class="mission-avatar-container"></div>
                         <p class="mission-status">Pendiente</p>
                         <button class="btn secondary" data-target-screen="mission5">Acceder</button>
                     </div>
 
-                    <div class="folder terminal-folder">
-                        <h3>TERMINAL</h3>
-                        <p class="muted">Protocolo de Finalización</p>
-                        <p class="mission-status">Bloqueado</p>
-                        <button id="btn-terminal" class="btn primary" disabled>Tomar Decisión Final</button>
-                    </div>
+                    <!-- Misión final 6 removida: el cierre se realiza con devolución del/la docente -->
                 </div>
             </div>
 
             <div id="mission1" class="sub-screen hidden panel-container">
                 <div class="panel main-panel">
                     <div class="briefing" id="mission1-briefing">
-                        <h2>1. Sector Dirección: Principio C.I.D.</h2>
+                        <h2>1. Dirección: C.I.D. en el día a día</h2>
                         <img src="vega.png" class="avatar" alt="Dra. Vega">
                         <h3 class="briefer-name">Informe de la Dra. Vega</h3>
                         <div class="brief-grid">
@@ -92,17 +89,17 @@
                             </div>
                           </div>
                           <div class="brief-col text-col">
-                            <p class="briefing-text">Bienvenido, Agente. Tu primera misión es crucial. Se ha detectado una brecha en nuestra base de datos de becas. Tu tarea es identificar el patrón de acceso anómalo y restaurar la confidencialidad. Los principios de C.I.D. son la clave.</p>
+                            <p class="briefing-text">Bienvenido/a, Agente. Primer caso: alguien entró a un curso de <strong>CREA</strong> y empezó a mirar material que no le corresponde. Tu tarea es identificar qué pilar de la tríada C.I.D. se compromete en cada situación y recuperar el control.</p>
                           </div>
                         </div>
                         <hr/>
 
                         <div id="challenge-cid" class="challenge-ui">
-                            <h3>ASIGNACIÓN C.I.D. (APLICADO A TU VIDA REAL)</h3>
+                            <h3>ASIGNACIÓN C.I.D. (LICEO + PLATAFORMAS)</h3>
                             <p class="muted">Selecciona el principio de la tríada (Confidencialidad, Integridad, Disponibilidad) que se compromete más en cada caso:</p>
 
                             <div class="challenge-item" data-cid-correct="CONFIDENCIALIDAD">
-                                <span>1. Alguien accede a tu cuenta de Instagram y ve tus mensajes privados.</span>
+                                <span>1. Alguien entra a tu cuenta de <strong>CREA</strong> y lee mensajes/entregas privadas.</span>
                                 <div class="choices">
                                     <button class="choice" data-key="CONFIDENCIALIDAD">Confidencialidad</button>
                                     <button class="choice" data-key="INTEGRIDAD">Integridad</button>
@@ -110,7 +107,7 @@
                                 </div>
                             </div>
                             <div class="challenge-item" data-cid-correct="DISPONIBILIDAD">
-                                <span>2. Un ciberataque tumba los servidores de tu banco y no puedes acceder a tu dinero.</span>
+                                <span>2. El día de entrega, <strong>CREA</strong> no carga y no podés acceder a materiales ni entregar.</span>
                                 <div class="choices">
                                     <button class="choice" data-key="CONFIDENCIALIDAD">Confidencialidad</button>
                                     <button class="choice" data-key="INTEGRIDAD">Integridad</button>
@@ -118,7 +115,7 @@
                                 </div>
                             </div>
                             <div class="challenge-item" data-cid-correct="INTEGRIDAD">
-                                <span>3. Alguien modifica tus calificaciones universitarias en el sistema para que parezca que reprobaste una materia.</span>
+                                <span>3. En un documento compartido de <strong>WPS</strong>, alguien cambia el contenido de tu trabajo sin avisar.</span>
                                 <div class="choices">
                                     <button class="choice" data-key="CONFIDENCIALIDAD">Confidencialidad</button>
                                     <button class="choice" data-key="INTEGRIDAD">Integridad</button>
