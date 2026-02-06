@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Operación Firewall: ATLAS</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <canvas id="gridbg" aria-hidden="true"></canvas>
+
+    <section id="screen-start" class="screen active">
+        <h1 class="glitch" data-text="INSTITUTO ATLAS">INSTITUTO ATLAS</h1>
+        <h2>Operación Firewall: Agente Anónimo</h2>
+        <p class="intro-text">
+            Montevideo, 03 de diciembre del 2025 <br/>
+            Agente, el Instituto ATLAS está comprometido. Una amenaza silenciosa, que llamo el 'Código Fantasma', ha penetrado nuestros sistemas. No confíes en nadie. Te he citado aquí de forma anónima para que actúes. Tu misión es navegar por los sectores críticos de ATLAS, identificar las brechas y, lo más importante, aprender de cada una para protegerte a ti mismo en el mundo digital. Cada misión completada te dará acceso a nuevas áreas. Al final, deberás identificar al Código Fantasma. El futuro de ATLAS, y la seguridad de tu propia vida digital, dependen de tus decisiones.`
+        </p>
+        <button class="btn primary" id="btn-start">Acceder al Mapa de Operaciones</button>
+    </section>
+
+    <section id="screen-game" class="screen hidden">
+        <header class="hud">
+            <div>⚡ Puntos: <span id="hud-score">0</span></div>
+            <div>🔐 Firewalls: <span id="hud-keys">0/5</span></div>
+            <div id="hud-suspect">🔎 Sospechoso: PENDIENTE</div>
+        </header>
+
+        <main class="content-wrapper">
+            <div id="screen-map" class="sub-screen active">
+                <h2>📁 Mapa de Operaciones - Sectores de ATLAS</h2>
+
+                <div class="folder-grid">
+                    <div class="folder" data-mission-id="intro" aria-disabled="false">
+                        <h3>1. Dirección</h3>
+                        <p class="muted">Principio C.I.D.</p>
+                        <div class="mission-avatar-container"></div>
+                        <p class="mission-status">Pendiente</p>
+                        <button class="btn secondary" data-target-screen="mission1">Acceder</button>
+                    </div>
+
+                    <div class="folder" data-mission-id="hackers" aria-disabled="true">
+                        <h3>2. Reclutamiento</h3>
+                        <p class="muted">Análisis de Amenazas (Hacker)</p>
+                        <div class="mission-avatar-container"></div>
+                        <p class="mission-status">Pendiente</p>
+                        <button class="btn secondary" data-target-screen="mission2">Acceder</button>
+                    </div>
+
+                    <div class="folder" data-mission-id="credenciales" aria-disabled="true">
+                        <h3>3. Identidad Digital</h3>
+                        <p class="muted">Credenciales y MFA</p>
+                        <div class="mission-avatar-container"></div>
+                        <p class="mission-status">Pendiente</p>
+                        <button class="btn secondary" data-target-screen="mission3">Acceder</button>
+                    </div>
+                    <div class="folder" data-mission-id="ing_social" aria-disabled="true">
+                        <h3>4. Seguridad Interna</h3>
+                        <p class="muted">Ingeniería Social</p>
+                        <div class="mission-avatar-container"></div>
+                        <p class="mission-status">Pendiente</p>
+                        <button class="btn secondary" data-target-screen="mission4">Acceder</button>
+                    </div>
+                    <div class="folder" data-mission-id="iot" aria-disabled="true">
+                        <h3>5. Innovación</h3>
+                        <p class="muted">Vulnerabilidad IoT</p>
+                        <div class="mission-avatar-container"></div>
+                        <p class="mission-status">Pendiente</p>
+                        <button class="btn secondary" data-target-screen="mission5">Acceder</button>
+                    </div>
+
+                    <div class="folder terminal-folder">
+                        <h3>TERMINAL</h3>
+                        <p class="muted">Protocolo de Finalización</p>
+                        <p class="mission-status">Bloqueado</p>
+                        <button id="btn-terminal" class="btn primary" disabled>Tomar Decisión Final</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mission1" class="sub-screen hidden panel-container">
+                <div class="panel main-panel">
+                    <div class="briefing" id="mission1-briefing">
+                        <h2>1. Sector Dirección: Principio C.I.D.</h2>
+                        <img src="vega.png" class="avatar" alt="Dra. Vega">
+                        <h3 class="briefer-name">Informe de la Dra. Vega</h3>
+                        <div class="brief-grid">
+                          <div class="brief-col video-col">
+                            <div class="video-wrapper" id="video-wrapper-m1">
+                                
+                            </div>
+                          </div>
+                          <div class="brief-col text-col">
+                            <p class="briefing-text">Bienvenido, Agente. Tu primera misión es crucial. Se ha detectado una brecha en nuestra base de datos de becas. Tu tarea es identificar el patrón de acceso anómalo y restaurar la confidencialidad. Los principios de C.I.D. son la clave.</p>
+                          </div>
+                        </div>
+                        <hr/>
+
+                        <div id="challenge-cid" class="challenge-ui">
+                            <h3>ASIGNACIÓN C.I.D. (APLICADO A TU VIDA REAL)</h3>
+                            <p class="muted">Selecciona el principio de la tríada (Confidencialidad, Integridad, Disponibilidad) que se compromete más en cada caso:</p>
+
+                            <div class="challenge-item" data-cid-correct="CONFIDENCIALIDAD">
+                                <span>1. Alguien accede a tu cuenta de Instagram y ve tus mensajes privados.</span>
+                                <div class="choices">
+                                    <button class="choice" data-key="CONFIDENCIALIDAD">Confidencialidad</button>
+                                    <button class="choice" data-key="INTEGRIDAD">Integridad</button>
+                                    <button class="choice" data-key="DISPONIBILIDAD">Disponibilidad</button>
+                                </div>
+                            </div>
+                            <div class="challenge-item" data-cid-correct="DISPONIBILIDAD">
+                                <span>2. Un ciberataque tumba los servidores de tu banco y no puedes acceder a tu dinero.</span>
+                                <div class="choices">
+                                    <button class="choice" data-key="CONFIDENCIALIDAD">Confidencialidad</button>
+                                    <button class="choice" data-key="INTEGRIDAD">Integridad</button>
+                                    <button class="choice" data-key="DISPONIBILIDAD">Disponibilidad</button>
+                                </div>
+                            </div>
+                            <div class="challenge-item" data-cid-correct="INTEGRIDAD">
+                                <span>3. Alguien modifica tus calificaciones universitarias en el sistema para que parezca que reprobaste una materia.</span>
+                                <div class="choices">
+                                    <button class="choice" data-key="CONFIDENCIALIDAD">Confidencialidad</button>
+                                    <button class="choice" data-key="INTEGRIDAD">Integridad</button>
+                                    <button class="choice" data-key="DISPONIBILIDAD">Disponibilidad</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="unlock">
+                        <label for="mission1-challenge-key">Para completar tu misión, deberás ingresar la palabra clave.
+Pista: se trata de uno de los pilares fundamentales de la ciberseguridad.
+Si ordenaras sus iniciales alfabéticamente, sería la primera. ¿Ya sabes cuál es? </label>
+                        <input id="mission1-challenge-key" type="text" placeholder="Clave" />
+                        <button id="mission1-btn-submit" class="btn success">Desbloquear Firewall</button>
+                    </div>
+
+                    <div id="mission1-feedback" class="feedback" role="status" aria-live="polite"></div>
+                    <div class="footer-actions">
+                        <button class="btn secondary" data-target-screen="screen-map">Volver al mapa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mission2" class="sub-screen hidden panel-container">
+                <div class="panel main-panel">
+                    <div class="briefing" id="mission2-briefing">
+                        <h2>2. Sector Reclutamiento: El Código Fantasma</h2>
+                        <img src="kai.png" class="avatar" alt="Kai Byte">
+                        <h3 class="briefer-name">Informe de Kai Byte</h3>
+                        <div class="brief-grid">
+                            <div class="brief-col video-col">
+                                <div class="video-wrapper" id="video-wrapper-m2"></div>
+                        </div>
+                        <div class="brief-col text-col">
+                            <p class="briefing-text">Agente, el problema se complica. Hay un 'Código Fantasma' operando dentro de ATLAS, alguien con acceso y conocimientos internos. Mi preocupación es que podría ser una de nuestras nuevas incorporaciones. Debemos entender que no todos los 'hackers' son iguales; hay quienes buscan proteger (Sombreros Blancos), quienes operan en la ambigüedad (Sombreros Grises) y quienes buscan el daño (Sombreros Negros). Es vital discernir sus intenciones para proteger nuestra red. Analiza estos perfiles y clasifica a cada agente. Luego, y esto es crucial, elige a tu Sospechoso Principal. Tu elección activará la siguiente fase de nuestra investigación.</p>
+                              </div>
+                        </div>
+
+                        <hr/>
+
+                        <div id="challenge-hackers" class="challenge-ui">
+                            <h3>CLASIFICACIÓN DE AGENTES (EL CÓDIGO FANTASMA)</h3>
+                            <p class="muted">Clasifica a cada agente según sus actitudes (Blanco, Gris, Negro). Cada error restará puntos. Debes clasificar a los tres para poder elegir un sospechoso.</p>
+
+                            <div class="challenge-item" data-hacker-correct="Gris">
+                                <span class="hacker-description">Agente Vega: Pide acceso a logs de red sin permiso; Se ausentó 2 días por 'gripe'; Usa Wi-Fi pública para trabajo.</span>
+                                <div class="choices">
+                                    <button class="choice" data-hacker-type="Blanco">Blanco</button>
+                                    <button class="choice" data-hacker-type="Gris">Gris</button>
+                                    <button class="choice" data-hacker-type="Negro">Negro</button>
+                                </div>
+                            </div>
+                            <div class="challenge-item" data-hacker-correct="Blanco">
+                                <span class="hacker-description">Agente Leo: Reporta fallos en sistemas externos; Bloquea IPs no autorizadas; Da charlas de seguridad.</span>
+                                <div class="choices">
+                                    <button class="choice" data-hacker-type="Blanco">Blanco</button>
+                                    <button class="choice" data-hacker-type="Gris">Gris</button>
+                                    <button class="choice" data-hacker-type="Negro">Negro</button>
+                                </div>
+                            </div>
+                            <div class="challenge-item" data-hacker-correct="Negro">
+                                <span class="hacker-description">Agente Kael: Se opone a la MFA; Se descubrió que vendía listas de correos; Usa 'password123' en un test.</span>
+                                <div class="choices">
+                                    <button class="choice" data-hacker-type="Blanco">Blanco</button>
+                                    <button class="choice" data-hacker-type="Gris">Gris</button>
+                                    <button class="choice" data-hacker-type="Negro">Negro</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="suspect-ui-container" style="margin-top: 30px;">
+                            <h3>Elige a tu Sospechoso Principal</h3>
+                            <p class="muted" id="suspect-selection-message">Clasifica a los tres agentes arriba para habilitar la selección.</p>
+                            <div id="suspect-choice-area" style="display:flex; gap:20px; justify-content:center; margin-top:15px;">
+                            </div>
+                            <button id="btn-confirm-suspect" class="btn primary" style="margin-top:15px; display:none;">Confirmar Sospechoso</button>
+                        </div>
+                    </div>
+
+                    <div id="mission2-feedback" class="feedback" role="status" aria-live="polite"></div>
+                    <div class="footer-actions">
+                        <button class="btn secondary" data-target-screen="screen-map">Volver al mapa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mission3" class="sub-screen hidden panel-container">
+                <div class="panel main-panel">
+                    <div class="briefing" id="mission3-briefing">
+                        <h2>3. Sector Identidad Digital: El Código de Acceso</h2>
+                        <img src="Cipher.png" class="avatar" alt="Dra. Cipher">
+                        <h3 class="briefer-name">Informe de la Dra. Cipher</h3>
+                        <div class="brief-grid">
+                        <div class="brief-col video-col">
+                        <div class="video-wrapper" id="video-wrapper-m3"></div>
+                        </div>
+                          <div class="brief-col text-col">
+
+                        <p class="briefing-text">Agente, hemos contenido un intento masivo de 'Credential Stuffing' gracias a nuestra Autenticación Multifactor (MFA). Pero la realidad es que no todas tus cuentas personales tienen esta protección. La MFA es una capa de seguridad vital que exige dos o más pruebas para verificar tu identidad: algo que sabes (tu contraseña), algo que tienes (un código de tu móvil) o algo que eres (tu huella dactilar). Mi preocupación es que sin ella, tus cuentas son vulnerables. Para continuar, deberás explorar una 'habitación oscura' de nuestro sistema de pruebas y encontrar un código, una clave numérica de 4 cifras que restaurá el acceso al sistema de credenciales crítico. Pista: ten en cuenta cuales son las buenas prácticas de gestión de credenciales.
+</p>
+                        </div>
+                        </div>
+
+                        <hr/>
+
+                        <div id="genially-container-wrapper-m3" style="display:block; width:100%; min-height:500px; margin: 20px 0;">
+                        </div>
+                        
+                        
+                    </div>
+
+                    <div class="unlock">
+                        <label for="mission3-challenge-key">Para continuar, deberás explorar una 'habitación oscura' de nuestro sistema de pruebas y encontrar un código, una clave numérica de 4 cifras que restaurá el acceso al sistema de credenciales crítico. Pista: ten en cuenta cuales son las buenas prácticas de gestión de credenciales.</label>
+                        <input id="mission3-challenge-key" type="text" placeholder="Clave numérica" maxlength="4" />
+                        <button id="mission3-btn-submit" class="btn success">Desbloquear Firewall</button>
+                    </div>
+
+                    <div id="mission3-feedback" class="feedback" role="status" aria-live="polite"></div>
+                    <div class="footer-actions">
+                        <button class="btn secondary" data-target-screen="screen-map">Volver al mapa</button>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+
+            <div id="mission4" class="sub-screen hidden panel-container">
+                <div class="panel main-panel">
+                    <div class="briefing" id="mission4-briefing">
+                        <h2>4. Sector Seguridad Interna: Ingeniería Social</h2>
+                        <img src="phish.png" class="avatar" alt="Agente Phish">
+                        <h3 class="briefer-name">Informe del Agente Phish</h3>
+                        <div class="brief-grid">
+                        <div class="brief-col video-col">
+                        <div class="video-wrapper" id="video-wrapper-m4"></div>
+                        </div>
+                        <div class="brief-col text-col">
+                        <p class="briefing-text">Agente, estoy seriamente preocupado por una serie de incidentes que no encajan con los patrones de ataques habituales. No son fallas de software o contraseñas débiles. Es como si a la gente... simplemente se la hubiera manipulado para que hiciera cosas que no debía. Esto es Ingeniería Social, el arte oscuro de la persuasión. Los atacantes explotan nuestra confianza, nuestra curiosidad, nuestro miedo, o sobre todo, nuestra **urgencia**, para que les demos información o hagamos clic donde no debemos. Necesito que converses con nuestro chatbot de simulación de buenas prácticas en este Genially. Aprende a identificar las maniobras y, al finalizar el entrenamiento, obtendrás la clave.</p>
+                        </div>
+                        </div>
+
+                        <hr/>
+
+                      <div id="genially-container-wrapper-m4" style="display:block; width:100%; min-height:500px; margin: 20px 0;">
+                        </div>
+                    </div>
+
+                    <div class="unlock">
+                        <label for="mission4-challenge-key">Ingresar la clave de la misión¿Qué emoción o técnica es la más usada para manipularnos y hacernos hacer clic? Escribila yaaa!</label>
+                        <input id="mission4-challenge-key" type="text" placeholder="Clave" />
+                        <button id="mission4-btn-submit" class="btn success">Validar Simulación</button>
+                    </div>
+
+                    <div id="mission4-feedback" class="feedback" role="status" aria-live="polite"></div>
+                    <div class="footer-actions">
+                        <button class="btn secondary" data-target-screen="screen-map">Volver al mapa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mission5" class="sub-screen hidden panel-container">
+                <div class="panel main-panel">
+                    <div class="briefing" id="mission5-briefing">
+                        <h2>5. Sector Innovación: Vulnerabilidad IoT</h2>
+                        <img src="nodea.png" class="avatar" alt="Ing. Nodea">
+                        <h3 class="briefer-name">Informe del Ing. Nodea</h3>
+                        <div class="brief-grid">
+                        <div class="brief-col video-col">
+                        <div class="video-wrapper" id="video-wrapper-m5"></div>
+                        </div>
+                        <div class="brief-col text-col">
+                        <p class="briefing-text">Agente, hemos llegado al último punto. En ATLAS, hemos abrazado la tecnología IoT (Internet de las Cosas) para optimizar procesos, desde el control ambiental hasta la seguridad perimetral con cámaras inteligentes. Esto nos permite una eficiencia sin precedentes. Pero mi gran preocupación es que, si no se usan correctamente, estas tecnologías nos exponen a nuevos riesgos.
+
+                            Recuerdo que, en su momento, la persona encargada de la instalación de una cámara de seguridad en un sector remoto hizo varias preguntas y me comentó que por defecto, la clave inicial de esa cámara específica es <strong>'NODE'</strong>. La gran pregunta es: ¿La habrá cambiado? El 'Código Fantasma' se infiltró a través de una configuración insegura de una cámara IoT. Esto me genera muchísimas dudas, Agente. Intenta ayudarnos a descubrir qué falló.</p>
+                          </div>
+                        </div>
+
+                        <hr/>
+
+                        <div id="challenge-iot" class="challenge-ui">
+                            <h3>SEGURIDAD EN DISPOSITIVOS IoT</h3>
+                            <p class="muted">Selecciona la medida más crítica para mitigar el riesgo de una cámara IoT con credenciales de fábrica. Cada error restará puntos.</p>
+
+                            <div class="challenge-item" data-iot-correct="Cambiar credenciales y actualizar firmware.">
+                                <span>Medida para una cámara con "admin/admin":</span>
+                                <div class="choices">
+                                    <button class="choice" data-iot-option="Dejarla en red de invitados.">Dejarla en red de invitados.</button>
+                                    <button class="choice" data-iot-option="Cambiar credenciales y actualizar firmware.">Cambiar credenciales y actualizar firmware.</button>
+                                    <button class="choice" data-iot-option="Ponerle firewall físico.">Ponerle firewall físico.</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="unlock">
+                        <label for="mission5-challenge-key">Ingresa cómo se conectó la cámara IoT: intenta comprobar si aún usa la contraseña por defecto que sospechas. ¿la recuerdas?</label>
+                        <input id="mission5-challenge-key" type="text" placeholder="Clave" />
+                        <button id="mission5-btn-submit" class="btn success">Desbloquear Firewall</button>
+                    </div>
+
+                    <div id="mission5-feedback" class="feedback" role="status" aria-live="polite"></div>
+                    <div class="footer-actions">
+                        <button class="btn secondary" data-target-screen="screen-map">Volver al mapa</button>
+                        <div id="final-suspect-choice-section" style="margin-top: 20px; text-align: center;">
+                            <h3>Última Oportunidad: ¿Quién es el Código Fantasma?</h3>
+                            <p class="muted">Con toda la información recopilada, ¿confirma tu sospechoso o cambias de culpable?</p>
+                            <div id="final-suspect-choice-area" style="display:flex; gap:10px; justify-content:center; flex-wrap: wrap;">
+                            </div>
+                            <button id="btn-confirm-final-suspect" class="btn primary" style="margin-top:15px;">Confirmar Decisión Final</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="screen-end" class="sub-screen hidden feedback-screen" style="max-width: 90%; margin: 20px auto; padding: 20px;">
+                <p class="intro-text" id="final-message"></p>
+                <p class="intro-text">Puntuación final: <b id="final-score">0</b></p>
+                <button class="btn primary" id="btn-replay">Reiniciar Sistema</button>
+            </div>
+        </main>
+    </section>
+
+    <audio id="sfx-ok" src="audio/ok.mp3" preload="auto"></audio>
+    <audio id="sfx-error" src="audio/error.mp3" preload="auto"></audio>
+    <audio id="sfx-hover" src="audio/hover.mp3" preload="auto"></audio>
+    <audio id="sfx-click" src="audio/click.mp3" preload="auto"></audio>
+<div id="modal-overlay" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal-box">
+        <h3 id="modal-title">MENSAJE DEL SISTEMA</h3>
+        <div id="modal-body" class="modal-body-content">
+            </div>
+        <button id="modal-close-btn" class="btn primary">Entendido</button>
+    </div>
+</div>
+
+<div id="diary-component" class="diary-container">
+    <button id="diary-toggle-btn" class="btn primary diary-btn">
+        📔 DIARIO DE PISTAS <span id="diary-notification" class="hidden">!</span>
+    </button>
+    <div id="diary-panel" class="diary-content hidden">
+        <h4>FRAGMENTOS RECUPERADOS</h4>
+        <ul id="diary-list">
+            <li class="empty-msg">No hay pistas registradas aún.</li>
+        </ul>
+    </div>
+</div>
+
+
+<script src="script.js"></script>
+</body>
+</html>

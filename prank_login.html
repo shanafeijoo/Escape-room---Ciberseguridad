@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Advertencia de Seguridad!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --primary: #ffeb3b; /* Amarillo para la alerta */
+            --error: #f44336; /* Rojo para el hackeo */
+            --dark-bg: #0f0f1b;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            background-color: var(--dark-bg);
+            border: 3px solid var(--error);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(244, 67, 54, 0.5);
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .input-group label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            color: var(--primary);
+            font-size: 0.9em;
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid var(--error);
+            background-color: #333;
+            color: white;
+            border-radius: 6px;
+            resize: none;
+        }
+
+        .btn {
+            background-color: var(--error);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Pantalla de resultado (Hackeo) */
+        .result-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            background-color: var(--dark-bg);
+            border: 3px solid var(--success);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .result-screen h2 {
+            font-size: 2em;
+            color: var(--success);
+            text-shadow: 0 0 10px var(--success);
+        }
+
+        .tip {
+            border: 2px solid var(--primary);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            text-align: justify;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA 1: LOGIN TRAMPA -->
+    <div id="phishing-form" class="login-container">
+        <form id="prank-form">
+            <div class="input-group">
+                <label for="nombre">Nombre Completo y Apellido:</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Ej: María Pérez">
+            </div>
+
+            <div class="input-group">
+                <label for="cedula">Cédula:</label>
+                <!-- Usamos textarea para que parezca que pide mucha info, como un formulario largo -->
+                <textarea id="cedula" name="cedula" rows="3" required placeholder="Escriba aquí su número de cédula, teléfono o información de contacto por seguridad"></textarea>
+            </div>
+
+            <button type="submit" class="btn">Continuar y Validar Datos</button>
+        </form>
+    </div>
+
+    <!-- PANTALLA 2: RESULTADO DE LA BROMA -->
+    <div id="hack-result" class="result-screen">
+        <h2 class="text-red-500 font-bold">¡HACKEADO!</h2>
+        
+        <p class="text-xl text-yellow-300">¡UYY PROFE! Lo sentimos mucho... ¡Hemos sido hackeados!</p>
+        <p>Parece que el "Código Fantasma" se llevó todos sus juicios de APEs. ¡Deberá volver a ingresar al portafolio nuevamente! jajaja</p>
+        
+        <!-- GIF de broma de YouTube (Ejemplo de Rickroll) -->
+        <div style="width:100%;height:0;padding-bottom:45%;position:relative;"><iframe src="https://giphy.com/embed/oVvhEYvWDvE1G" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div>
+
+        <div class="tip mt-4 text-sm">
+            <p class="font-bold text-yellow-500 mb-2">💡 OJO: LECCIÓN APRENDIDA</p>
+            <p>
+                <strong>Atención con los QR que escaneás y los enlaces que abrís.</strong> 
+                Acabás de ser parte de un ejercicio de Ingeniería Social. 
+                En este entorno estás seguro/a, pero si ingresaste datos reales, 
+                recordá que <strong>nunca debés proporcionar información sensible</strong> 
+                sin verificar la fuente.
+            </p>
+        </div>
+
+        <button id="btn-start-game" class="btn bg-green-500 hover:bg-green-700 mt-4">¡Ya me asusté, iniciar el Escape Room de verdad!</button>
+    </div>
+
+    <script>
+        document.getElementById('prank-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Ocultar la pantalla de phishing
+            document.getElementById('phishing-form').style.display = 'none';
+
+            // Mostrar la pantalla de resultado
+            const resultScreen = document.getElementById('hack-result');
+            resultScreen.style.display = 'flex';
+        });
+
+        document.getElementById('btn-start-game').addEventListener('click', function() {
+            // FIX: Usar window.location.replace para una navegación más robusta
+            // Redirigir al archivo principal del Escape Room
+            window.location.replace('game.html'); 
+        });
+    </script>
+</body>
+</html>
