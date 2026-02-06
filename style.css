@@ -16,15 +16,16 @@
 }
 
 body {
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Share Tech Mono', monospace; /* O una fuente de tu elección */
     background-color: var(--bg-color);
     color: var(--text-color);
     margin: 0;
+    /* Remover overflow: hidden del body si causa problemas de scroll en misiones */
+    display: flex; /* Para centrar la pantalla principal */
+    justify-content: center;
+    align-items: center;
     min-height: 100vh;
-    box-sizing: border-box;
-    /* Mobile-first: permitimos scroll natural y evitamos “pantalla clavada” */
-    display: block;
-    -webkit-text-size-adjust: 100%;
+    box-sizing: border-box; /* Asegura que padding no aumente el tamaño total */
 }
 
 #gridbg {
@@ -42,54 +43,16 @@ body {
     width: 100%;
     max-width: 1200px; /* Ancho máximo para el contenido del juego */
     margin: auto;
-    padding: 14px;
+    padding: 20px;
     box-sizing: border-box;
     /* Usamos display flex/none para controlar visibilidad de las pantallas principales */
     display: none; /* Oculto por defecto */
     flex-direction: column; /* Organiza el contenido en columna */
     align-items: center; /* Centra horizontalmente */
-    justify-content: flex-start; /* Mobile: prioriza lectura y scroll */
-    min-height: 100svh;
+    justify-content: center; /* Centra verticalmente */
+    min-height: calc(100vh - 40px); /* Para que ocupe casi toda la altura visible */
     position: relative; /* Para que las sub-pantallas se posicionen con respecto a ella */
     text-align: center; /* Por defecto, centra el texto de las pantallas principales */
-}
-
-/* Mejor experiencia en pantallas grandes: centrado visual */
-@media (min-width: 900px) {
-    .screen {
-        padding: 20px;
-        justify-content: center;
-        min-height: calc(100vh - 40px);
-    }
-}
-
-/* Prioridad mobile */
-@media (max-width: 600px) {
-    .glitch { font-size: 2.2em; }
-    .intro-text { font-size: 1em; }
-
-    .hud {
-        position: sticky;
-        top: 0;
-        z-index: 5;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-    }
-
-    .btn {
-        width: 100%;
-        max-width: 520px;
-    }
-
-    .folder-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .panel { padding: 16px; }
-    .sub-screen { padding: 16px; margin: 12px auto; }
-
-    .video-wrapper { margin: 12px auto; }
 }
 
 .screen.active {
@@ -228,55 +191,6 @@ h1, h2, h3 {
     border-radius: 5px;
     width: 100%; /* Asegura que el HUD ocupe el ancho completo del screen-game */
     box-sizing: border-box;
-}
-
-/* ================================
-   MOBILE FIRST: prioridad experiencia en celular
-   ================================ */
-
-@media (max-width: 650px) {
-    .glitch { font-size: 2.2em; }
-    .intro-text { font-size: 1em; text-align: left; }
-
-    .hud {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-        position: sticky;
-        top: 0;
-        z-index: 5;
-    }
-
-    .btn {
-        width: 100%;
-        max-width: 520px;
-    }
-
-    .folder-grid {
-        grid-template-columns: 1fr;
-        gap: 14px;
-    }
-
-    .panel {
-        padding: 16px;
-    }
-
-    .sub-screen {
-        padding: 14px;
-        margin: 12px auto;
-    }
-
-    .brief-grid {
-        grid-template-columns: 1fr !important;
-    }
-
-    .choices {
-        gap: 8px;
-    }
-
-    .choices button {
-        flex: 1 1 140px;
-    }
 }
 
 .hud div {
@@ -921,6 +835,66 @@ h1, h2, h3 {
     [id^="genially-container-wrapper"] iframe {
         height: 600px !important; /* Más alto en móviles para ver mejor */
     }
+}
+
+/* ---------------------------------------------------------
+   UI educativo: cajas de concepto + simulaciones (mobile-first)
+---------------------------------------------------------- */
+
+.concept-box{
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.18);
+    border-radius: 14px;
+    padding: 12px;
+    margin: 0 0 12px 0;
+}
+.concept-box h4{ margin: 0 0 6px 0; font-size: 0.98rem; }
+.concept-box p{ margin: 0; line-height: 1.35; }
+
+.email-window, .wps-window{
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.22);
+    border-radius: 16px;
+    overflow: hidden;
+}
+.email-topbar, .wps-topbar{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,.06);
+}
+.dot{ width: 10px; height: 10px; border-radius: 99px; background: rgba(255,255,255,.25); display:inline-block; }
+.email-app{ margin-left: auto; opacity: .85; font-size: .9rem; }
+
+.email-card{ padding: 12px; }
+.email-header{ display:flex; gap: 10px; align-items:flex-start; }
+.email-avatar{ width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,.14); }
+.email-from{ font-size: .92rem; }
+.email-subject{ font-size: .95rem; margin-top: 2px; }
+.email-meta{ font-size: .8rem; opacity: .75; margin-top: 2px; }
+.email-body{ margin-top: 10px; font-size: .95rem; line-height: 1.35; }
+.fake-link{ text-decoration: underline; opacity: .95; word-break: break-all; }
+
+/* Animación suave del "mail" */
+#phishing-email-card{
+    transform: translateY(10px);
+    opacity: 0;
+    animation: mailIn .75s ease-out forwards;
+}
+@keyframes mailIn{
+    to{ transform: translateY(0); opacity: 1; }
+}
+
+.wps-card{ padding: 12px; }
+.tag{ display:inline-block; padding: 3px 8px; border-radius: 999px; font-size: .8rem; }
+.tag.warn{ background: rgba(255,120,120,.18); border: 1px solid rgba(255,120,120,.3); }
+
+/* Mobile: que las columnas se apilen */
+@media (max-width: 720px){
+    .brief-grid{ display: block !important; }
+    .brief-col{ width: 100% !important; }
+    .email-avatar{ width: 38px; height: 38px; }
 }
 
 

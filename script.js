@@ -7,7 +7,8 @@ const CLAVES = {
     hackers: "NINGUNA",
     credenciales: "4321",
     ing_social: "URGENCIA",
-    iot: "NODE"
+    iot: "ACTUALIZAR",
+    caso_final: "VERIFICAR"
 };
 
 const SUSPECT_IMAGES = {
@@ -29,45 +30,44 @@ const MISSION_BRIEFERS = {
     "hackers": { name: "Kai Byte", avatar: "kai.png" },
     "credenciales": { name: "Dra. Cipher", avatar: "Cipher.png" },
     "ing_social": { name: "Agente Phish", avatar: "phish.png" },
-    "iot": { name: "Ing. Nodea", avatar: "nodea.png" }
+    "iot": { name: "Ing. Nodea", avatar: "nodea.png" },
+    "caso_final": { name: "Soporte", avatar: "kai.png" }
 };
 
 const BRIEF = {
     intro: {
-        post_mission_concern: "Bien, Agente. Volvimos a poner límites (Confidencialidad) y el curso de CREA quedó bajo control. Pero el problema no terminó: alguien sigue moviéndose por canales del liceo como si tuviera permiso. Siguiente parada: **Adscripción**. Necesitamos mirar conductas y perfiles. 🤔 Te queda una letra suelta: **C**.",
-        description: "Agente, soy la Dra. Vega. En el liceo detectamos una anomalía: accesos raros a cursos en **CREA** y cambios en archivos compartidos. Para entender qué está en juego, necesitás dominar la **Tríada C.I.D.**: **Confidencialidad** (quién puede ver), **Integridad** (qué tan fiel es la info) y **Disponibilidad** (si está accesible cuando se necesita). Tu primera tarea es demostrar que podés aplicarlo a situaciones reales del liceo.",
-        // NUEVO CAMPO:
-        diaryClue: "Misión 1: Primer rastro en Dirección/CREA. Una letra: **C**."
+        description: "En Dirección apareció actividad rara en documentos y datos del liceo. Para investigar sin adivinar, usamos la **Tríada C‑I‑D**: *Confidencialidad* (quién puede ver), *Integridad* (que no se cambie), y *Disponibilidad* (que esté accesible cuando hace falta).",
+        post_mission_concern: "Bien. Ahora el foco pasa a la Sala de Informática: los equipos compartidos y las sesiones abiertas suelen ser el verdadero agujero.",
+        diaryClue: "Diario: En el carrito de préstamos apareció una sesión de CREA abierta. Vega dice que no fue; Kael insiste en que vio a Leo usando esa PC ‘solo un minuto’."
     },
     hackers: {
-       post_mission_concern: "Elegiste un sospechoso, bien. Ahora toca lo más común: alguien está intentando entrar a cuentas (Gmail/CREA) probando claves recicladas. Vamos a la **Sala de Informática** a revisar buenas prácticas de contraseñas y MFA. 🤔 Te queda otra letra: **O**.",
-        description: "Agente: en Adscripción vimos comportamientos distintos. No todo el que “toquetea” sistemas tiene la misma intención. Clasificamos perfiles (blanco/gris/negro) para entender el riesgo y decidir un sospechoso, como harías ante un incidente real en un liceo.",
-        // NUEVO CAMPO:
-        diaryClue: "Misión 2: Adscripción dejó otro fragmento: **O**."
+        description: "En equipos de uso común, el riesgo muchas veces no es ‘un hacker externo’, sino hábitos: dejar cuentas abiertas, guardar contraseñas en el navegador o compartir claves. Clasificá prácticas y elegí un sospechoso a seguir.",
+        post_mission_concern: "Seguimos con Identidad Digital: si alguien consigue tu contraseña, sin doble verificación (MFA) entra igual.",
+        diaryClue: "Diario: Alguien dejó contraseñas guardadas en el navegador de un equipo del liceo. Leo acusa a Kael por ‘apurar y salir’, pero Vega comenta que vio a Leo usando autocompletar."
     },
     credenciales: {
-        pistaIntriga: "** 🚨** Se halló un borrador de correo con terminología de **rescate de datos** en la cuenta del Agente Leo. / Un acceso remoto inesperado fue detectado desde una **dirección MAC estática** en la red de invitados. 🤔 una nota que te llama la atención ** RR **",
-        post_mission_concern: "Perfecto: con MFA y claves más fuertes, bajamos muchísimo el riesgo. Pero el ataque más fácil sigue siendo convencerte. Próximo: **Seguridad Interna** (mensajes por Gmail, QR, cadenas).",
-        description: "Agente, el 'credential stuffing' no es una película: pasa cuando alguien prueba combinaciones robadas en servicios como **Gmail** o plataformas educativas. La **MFA** agrega una segunda prueba y corta el ataque. Tu tarea es resolver un desafío corto para obtener el código de 4 cifras.",
-        // NUEVO CAMPO:
-        diaryClue: "Misión 3: Encontré una nota extraña durante la crisis de credenciales. Dice: **RR**."
+        description: "**MFA** (doble verificación) es pedir un segundo paso además de la contraseña (por ejemplo, un código en el celular). Sirve porque la contraseña sola se puede filtrar o reutilizar. Tu misión es encontrar el código y entender el punto.",
+        post_mission_concern: "Ahora viene lo más común: correos falsos que imitan a Dirección y apuran con urgencia. Vamos a phishing.",
+        diaryClue: "Diario: El intento de acceso venía desde una computadora que ‘no debía estar en ese salón’. Kael dice que fue por préstamo; Leo dice que él nunca presta su usuario."
     },
     ing_social: {
-        pistaIntriga: "** 🚨** El malware usa un protocolo diseñado para dispositivos de **bajo consumo y simple procesamiento**. / La Agente Vega ha accedido a la base de datos de Becas (M1) más de 12 veces esta semana. ¡Demasiadas veces! ¿no? 🤔 Alguien quiere decirnos algo: ** E **",
-        post_mission_concern: "Bien ahí. Si frenás la urgencia, frenás el phishing. Último tramo: **Innovación** (WiFi del liceo, dispositivos y 'cosas conectadas').",
-        description: "Agente, acá aparece lo típico del liceo: mails que piden “clave ya”, QR en un afiche, o un video en YouTube que te manda a un link raro. Eso es **Ingeniería Social**. La clave es reconocer la urgencia y verificar antes de hacer clic.",
-        // NUEVO CAMPO:
-        diaryClue: "Misión 4: Entre los intentos de manipulación social, aislé un carácter más: **E**."
+        description: "**Phishing** es un engaño por correo (o mensaje) para que hagas clic o entregues datos. Pistas típicas: urgencia, pedir información personal, enlaces raros, presión. Resuelve el chequeo.",
+        post_mission_concern: "Bien visto. Pero aún queda una fuente de riesgo: dispositivos personales conectados (IoT).",
+        diaryClue: "Diario: El mail tenía la foto real de Dirección, pero el tono era raro. Vega dice ‘yo no mando links acortados’. Leo responde que ‘todo el mundo usa acortadores’."
     },
     iot: {
-       post_mission_concern: "Excelente. Cerramos el último frente y juntamos todas las pistas. Ahora, con todo lo visto, hacemos cierre en clase: ¿qué falló realmente, una persona o el sistema? 🤔 Última letra: **A**.",
-        description: "Agente, último caso: el liceo tiene WiFi, cámaras, proyectores, impresoras, y dispositivos conectados. Si quedan con claves por defecto o mal configurados, son una puerta. Investigá la vulnerabilidad y juntá la última pista.",
-        // NUEVO CAMPO:
-        diaryClue: "Misión 5: La vulnerabilidad IoT escondía la pieza final: **A**."
+        description: "**IoT**: cosas conectadas (smartwatch, auriculares, cámaras). Si no se actualizan, o se sincronizan con cuentas del liceo en PCs compartidas, pueden exponer datos.",
+        post_mission_concern: "Último paso: el Caso final. Hay un enlace acortado y un documento WPS con permisos mal puestos.",
+        diaryClue: "Diario: El reloj de Kael se conectó a la Wi‑Fi del liceo ese día… pero también el celular de Leo. Nada concluyente."
+    },
+    caso_final: {
+        description: "Caso final: un enlace acortado en Gmail abre un documento WPS compartido para editar. Tu objetivo: detectar la cadena de riesgo y qué decisiones la frenan.",
+        post_mission_concern: "Con esto, la TERMINAL queda lista para tu decisión final.",
+        diaryClue: "Diario: El documento WPS estaba en ‘cualquiera puede editar’. Eso explica el caos… pero no dice quién lo configuró así (o quién compartió el link)."
     }
 };
 
-const ORDER = ["intro", "hackers", "credenciales", "ing_social", "iot"];
+const ORDER = ["intro", "hackers", "credenciales", "ing_social", "iot", "caso_final"];
 
 const M1_SCORE_LOSS_KEY = 50;
 const M3_SCORE_LOSS_KEY = 75;
@@ -83,7 +83,7 @@ const COMPLETION_POINTS = 1000;
 function loadState() {
     const defaultState = {
         score: 0,
-        keys: { intro: false, hackers: false, credenciales: false, ing_social: false, iot: false },
+        keys: { intro: false, hackers: false, credenciales: false, ing_social: false, iot: false, caso_final: false },
         suspect: null,
         final_suspect_choice: null
     };
@@ -208,7 +208,7 @@ function updateHUD() {
     const hudScore = document.getElementById('hud-score');
     if (hudScore) hudScore.textContent = state.score;
     const hudKeys = document.getElementById('hud-keys');
-    if (hudKeys) hudKeys.textContent = `${collectedKeys}/5`;
+    if (hudKeys) hudKeys.textContent = `${collectedKeys}/6`;
     const hudSuspect = document.getElementById('hud-suspect') || document.getElementById('hud-suspect-display');
     if (hudSuspect) hudSuspect.textContent = `🔎 Sospechoso: ${state.suspect ? state.suspect.replace('Agente ', '') : 'PENDIENTE'}`;
 
@@ -263,9 +263,9 @@ function updateMapFolders(state, collectedKeys) {
 
     const terminalBtn = document.getElementById('btn-terminal');
     if (terminalBtn) {
-        terminalBtn.disabled = collectedKeys < 5;
+        terminalBtn.disabled = collectedKeys < 6;
         const terminalStatus = document.querySelector('.folder.terminal-folder .mission-status');
-        if (collectedKeys < 5) {
+        if (collectedKeys < 6) {
             if (terminalStatus) terminalStatus.textContent = 'Bloqueado';
             terminalBtn.classList.add('disabled-btn');
         } else {
@@ -410,6 +410,7 @@ const MISSION_SCREENS = {
     "credenciales": "mission3",
     "ing_social": "mission4",
     "iot": "mission5",
+    "caso_final": "mission6",
 };
 
 // =========================================================
@@ -608,16 +609,24 @@ function handleMissionSubmitClick(missionId) {
             isKeyCorrect = input === CLAVES.iot;
             if (isKeyCorrect) {
                 modalTitle = "✅ RED IOT SEGURA";
-                feedbackMessage = `Firewall Misión 5 Desbloqueado.<br><br>${BRIEF.iot?.post_mission_concern || ''}`;
-                
-                // Mostrar la sección final de elección de culpable
-                const finalSection = document.getElementById('final-suspect-choice-section');
-                if (finalSection) finalSection.style.display = 'block';
-                renderFinalSuspectChoiceUI(loadState());
+                feedbackMessage = `Misión 5 completada.<br><br>${BRIEF.iot?.post_mission_concern || ''}`;
             } else {
                 updateScore(-M5_SCORE_LOSS_KEY);
                 modalTitle = "🚨 CREDENCIALES INVÁLIDAS";
-                feedbackMessage = "Clave incorrecta. Revisa el nombre de usuario por defecto común en dispositivos IoT.";
+                feedbackMessage = "Clave incorrecta. Pista: es la acción más importante que reduce fallas conocidas en dispositivos.";
+            }
+            break;
+        }
+        case 'caso_final': {
+            const input = (challengeKeyInput && challengeKeyInput.value) ? challengeKeyInput.value.toUpperCase().trim() : '';
+            isKeyCorrect = input === CLAVES.caso_final;
+            if (isKeyCorrect) {
+                modalTitle = "✅ CASO RESUELTO";
+                feedbackMessage = "Caso final completado. La TERMINAL ya puede activarse para la decisión final.";
+            } else {
+                updateScore(-M5_SCORE_LOSS_KEY);
+                modalTitle = "🚨 AÚN NO";
+                feedbackMessage = "Clave incorrecta. Pista: primero se VERIFICA por otro canal.";
             }
             break;
         }
@@ -687,7 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Agente Vega': { name: 'Dra. Vega', avatar: 'vega.png', justification: "Su actividad múltiple era por sobrecarga de trabajo." },
         'Agente Leo': { name: 'Agente Leo', avatar: 'leo.png', justification: "Investigaba vulnerabilidades proactivamente (Hacker Gris)." },
         'Agente Kael': { name: 'Agente Kael', avatar: 'kael.png', justification: "Sus credenciales fueron robadas antes de entrar. Es víctima." },
-        'Sistema IoT (NODE)': { name: 'Vulnerabilidad IoT (NODE)', avatar: 'iot.png', justification: "El fallo fue una cámara con clave por defecto. Error de sistema, no humano." }
+        'Caso final (Enlace + WPS)': { name: 'Enlace acortado + WPS mal compartido', avatar: 'iot.png', justification: "El problema real fue un enlace acortado que llevó a un documento WPS con permisos de edición para cualquiera. Se aprovechó de malas configuraciones y apuro." }
     };
 
     let state = loadState();
@@ -760,12 +769,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Cargas específicas
                 if (targetSubScreenId === 'mission2') renderSuspectChoiceUI(state);
                 if (targetSubScreenId === 'mission3') loadGeniallyIframe('genially-container-wrapper-m3', 'https://view.genially.com/68f7f6a5e20bb1a9756973c5/interactive-content-3m-cuarto-oscuro'); 
-                if (targetSubScreenId === 'mission4') loadGeniallyIframe('genially-container-wrapper-m4', 'https://view.genially.com/68f39f77532d1fe72f657dac'); 
-                if (targetSubScreenId === 'mission5') {
-                    const finalSection = document.getElementById('final-suspect-choice-section');
-                    if (finalSection) finalSection.style.display = state.keys[missionId] ? 'block' : 'none';
-                    renderFinalSuspectChoiceUI(state);
-                }
+                // Misión 4 y Caso final ahora son simulaciones en HTML (sin Genially).
             }
         });
     });
@@ -782,6 +786,65 @@ document.addEventListener('DOMContentLoaded', () => {
     tryAttach(['mission3-btn-submit', 'credenciales-btn-submit'], () => handleMissionSubmitClick('credenciales'));
     tryAttach(['mission4-btn-submit', 'ing_social-btn-submit'], () => handleMissionSubmitClick('ing_social'));
     tryAttach(['mission5-btn-submit', 'iot-btn-submit'], () => handleMissionSubmitClick('iot'));
+    tryAttach(['mission6-btn-submit', 'caso_final-btn-submit'], () => handleMissionSubmitClick('caso_final'));
+
+    // ---------------------------------------------------------
+    // Misiones con quiz (phishing / caso final): al aprobar, revelan y precargan la clave
+    // ---------------------------------------------------------
+    function evaluateMcqBlock(containerEl) {
+        if (!containerEl) return { ok: false, total: 0, correct: 0 };
+        const blocks = [...containerEl.querySelectorAll('.mcq')];
+        let correct = 0;
+        blocks.forEach(b => { if (b.dataset.answered === 'true' && b.dataset.isCorrect === 'true') correct++; });
+        return { ok: blocks.length > 0 && correct === blocks.length, total: blocks.length, correct };
+    }
+
+    function attachMcqPickers(scopeSelector) {
+        document.querySelectorAll(`${scopeSelector} .mcq .choice[data-mcq]`).forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const mcq = e.target.closest('.mcq');
+                if (!mcq) return;
+                const picked = e.target.dataset.mcq;
+                const correct = (mcq.dataset.correct || '').trim();
+                mcq.querySelectorAll('.choice').forEach(b => b.classList.remove('picked','correct','incorrect'));
+                e.target.classList.add('picked');
+                mcq.dataset.answered = 'true';
+                const isCorrect = picked === correct;
+                mcq.dataset.isCorrect = isCorrect ? 'true' : 'false';
+                e.target.classList.add(isCorrect ? 'correct' : 'incorrect');
+                if (!isCorrect) updateScore(-10);
+            });
+        });
+    }
+
+    attachMcqPickers('#phishing-quiz');
+    attachMcqPickers('#casefinal-quiz');
+
+    document.getElementById('btn-check-phishing-quiz')?.addEventListener('click', () => {
+        const res = evaluateMcqBlock(document.getElementById('phishing-quiz'));
+        const out = document.getElementById('phishing-quiz-result');
+        if (!out) return;
+        if (res.ok) {
+            out.innerHTML = `✅ Bien. Clave: <b>${CLAVES.ing_social}</b>`;
+            const inp = document.getElementById('mission4-challenge-key');
+            if (inp) inp.value = CLAVES.ing_social;
+        } else {
+            out.innerHTML = `❌ Te faltan respuestas correctas (${res.correct}/${res.total}). Revisa las señales del mail.`;
+        }
+    });
+
+    document.getElementById('btn-check-casefinal-quiz')?.addEventListener('click', () => {
+        const res = evaluateMcqBlock(document.getElementById('casefinal-quiz'));
+        const out = document.getElementById('casefinal-quiz-result');
+        if (!out) return;
+        if (res.ok) {
+            out.innerHTML = `✅ Caso entendido. Clave final: <b>${CLAVES.caso_final}</b>`;
+            const inp = document.getElementById('mission6-challenge-key');
+            if (inp) inp.value = CLAVES.caso_final;
+        } else {
+            out.innerHTML = `❌ Aún no (${res.correct}/${res.total}). Pista: primero se verifica y se controlan permisos.`;
+        }
+    });
 
     // Puzzles (CID, Hackers, IoT)
     document.querySelectorAll('#challenge-cid .choice').forEach(b => b.addEventListener('click', (e) => {
@@ -842,7 +905,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return; 
         }
         
-        const REAL_CULPRIT_KEY = 'Sistema IoT (NODE)';
+        const REAL_CULPRIT_KEY = 'Caso final (Enlace + WPS)';
         let finalMessage = ""; 
         let finalScoreAdjustment = 0;
         let isVictory = (cur.final_suspect_choice === REAL_CULPRIT_KEY);
@@ -851,7 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // VICTORIA
             finalMessage = `
                 <h3 style="color: var(--success); margin-bottom: 15px;">✅ ¡HAS DESENMASCARADO AL CÓDIGO FANTASMA!</h3>
-                <p>La infiltración se originó en el **Sistema IoT (NODE)**. No era un empleado, sino un **error de diseño**.</p>
+                <p>La infiltración se originó en el <b>combo del Caso final</b>: un <b>enlace acortado</b> que llevó a un documento en <b>WPS</b> mal compartido ("cualquiera con el enlace puede editar"). No era “un villano”: fue una cadena de decisiones inseguras.</p>
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 15px;">
                     ${['Agente Vega', 'Agente Leo', 'Agente Kael'].map(agentKey => `
                         <div style="text-align: center; width: 120px;">
@@ -883,6 +946,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p style="color: var(--primary);"><strong>📩 INFORME FINAL DISPONIBLE:</strong></p>
                 <button id="btn-show-ending-video" class="btn primary" style="width: 100%; max-width: 400px; margin-bottom: 15px;">▶ REPRODUCIR VIDEO FINAL</button>
                 <div id="ending-video-container"></div>
+                
+                <br>
+                <p style="color: var(--accent); margin-top: 20px;"><strong>⚠️ ALERTA DE SISTEMA:</strong></p>
+                <p>Se ha detectado un sector corrupto (Sector 6). Se requiere intervención docente.</p>
+                
+                <button id="btn-open-mission6-modal" class="btn success" style="border: 2px solid var(--accent);">🔓 DESBLOQUEAR SECTOR 6</button>
             </div>
         `;
         
@@ -900,6 +969,25 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('btn-show-ending-video')?.addEventListener('click', (e) => {
                 e.target.style.display = 'none';
                 loadYoutubeVideo('ending-video-container', 'uI_Hx99ekBo', true); // <--- AQUÍ ACTIVAMOS EL SONIDO
+            });
+
+            // Modal Misión 6
+            document.getElementById('btn-open-mission6-modal')?.addEventListener('click', () => {
+                const modalContent = `
+                    <div style="text-align:center;">
+                        <h2 style="color:var(--accent);">⚠️ PROTOCOLO ARQUITECTO ACTIVADO</h2>
+                        <img src="vega.png" style="width:100px; border-radius:50%; border:3px solid var(--primary); margin:10px auto;">
+                        <p style="font-size:1.1em; text-align:justify;">
+                            "Agente, ya sea que hayas acertado o fallado, ATLAS te necesita. 
+                            Hemos encontrado un área vacía: el <strong>Sector 6</strong>.
+                            Tu misión ahora no es jugar, sino <strong>CREAR</strong>."
+                        </p>
+                        <p><strong>Objetivo:</strong> Diseñar una experiencia gamificada.</p>
+                        <br>
+                        <a href="mission6.html" target="_blank" class="btn primary" style="font-size:1.2em; text-decoration:none;">🚀 IR AL HACKATHON</a>
+                    </div>
+                `;
+                showModal("NUEVA MISIÓN DESBLOQUEADA", modalContent, true);
             });
         }, 100);
 
@@ -1014,7 +1102,7 @@ function renderFinalSuspectChoiceUI(currentState) {
     choiceArea.innerHTML = ''; // Limpiar área
 
     // Lista de sospechosos finales
-    const suspects = ['Agente Vega', 'Agente Leo', 'Agente Kael', 'Sistema IoT (NODE)'];
+    const suspects = ['Agente Vega', 'Agente Leo', 'Agente Kael', 'Caso final (Enlace + WPS)'];
     
     suspects.forEach(sName => {
         const optionBtn = document.createElement('button');
