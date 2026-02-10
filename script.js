@@ -34,24 +34,24 @@ const STATE_STORAGE_KEY = 'atlas_firewall_state';
 const SUSPECTS = [
     {
         id: 'vega',
-        name: 'Agente Vega',
+        name: 'Vega',
         title: 'Perfil A — Eficiencia sobre protocolo',
         short: 'Apuro + atajos: sesión abierta, claves guardadas, “después lo cierro”.',
-        img: 'suspect_a.svg'
+        img: 'vega.png'
     },
     {
         id: 'leo',
-        name: 'Agente Leo',
+        name: 'Leo',
         title: 'Perfil B — Confianza institucional',
         short: 'Cree en lo “oficial”: logo, firma, urgencia… y hace clic sin verificar.',
-        img: 'suspect_b.svg'
+        img: 'leo.png'
     },
     {
         id: 'kael',
-        name: 'Agente Kael',
+        name: 'Kael',
         title: 'Perfil C — Colaboración sin límites',
         short: 'Comparte de más: permisos abiertos, reenviar enlaces, “edición para cualquiera”.',
-        img: 'suspect_c.svg'
+        img: 'kael.png'
     }
 ];
 
@@ -168,34 +168,62 @@ function saveState(state) {
 // =========================================================
 function renderSuspectSelector(container, selectedId, disabled, onSelect, opts = {}) {
     if (!container) return;
-    container.classList.add('suspect-grid');
-
     const { showName = true, showProfile = true } = opts;
 
-    container.innerHTML = SUSPECTS.map(s => {
-        const isSel = selectedId === s.id;
-        const pressed = isSel ? 'true' : 'false';
-        const dis = disabled ? 'disabled' : '';
-        const label = showName ? `<div class="suspect-title">${s.name}</div>` : '';
-        const profile = showProfile ? `<div class="suspect-short"><b>${s.title}</b><br>${s.short}</div>` : `<div class="suspect-short">${s.short}</div>`;
-        return `
-            <button type="button" class="suspect-card suspect-option ${isSel ? 'selected' : ''}" data-suspect-id="${s.id}" aria-pressed="${pressed}" ${dis}>
-                <div class="suspect-photo"><img src="${s.img}" alt="${s.name}" loading="lazy"></div>
-                <div class="suspect-info">
-                    ${label}
-                    ${profile}
-                </div>
-            </button>
-        `;
-    }).join('');
+    // Layout según variante
+    container.classList.remove('suspect-grid', 'suspect-choice');
+    container.classList.add(showProfile ? 'suspect-grid' : 'suspect-choice');
+    container.innerHTML = '';
 
-    container.querySelectorAll('button.suspect-option').forEach(btn => {
+    SUSPECTS.forEach(s => {
+        const isSel = selectedId === s.id;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `suspect-option ${showProfile ? 'suspect-full' : 'suspect-compact'} ${isSel ? 'active-choice' : ''}`;
+        btn.setAttribute('data-suspect-id', s.id);
+        btn.setAttribute('aria-pressed', isSel ? 'true' : 'false');
+        btn.disabled = !!disabled;
+
+        const oval = document.createElement('div');
+        oval.className = 'suspect-oval';
+        const img = document.createElement('img');
+        img.src = s.img;
+        img.alt = s.name;
+        img.loading = 'lazy';
+        oval.appendChild(img);
+
+        const text = document.createElement('div');
+        text.className = 'suspect-text';
+
+        if (showName) {
+            const nm = document.createElement('div');
+            nm.className = 'suspect-name';
+            nm.textContent = s.name;
+            text.appendChild(nm);
+        }
+        if (showProfile) {
+            const ttl = document.createElement('div');
+            ttl.className = 'suspect-title';
+            ttl.textContent = s.title;
+            const sh = document.createElement('div');
+            sh.className = 'suspect-short';
+            sh.textContent = s.short;
+            text.appendChild(ttl);
+            text.appendChild(sh);
+        }
+
+        btn.appendChild(oval);
+        btn.appendChild(text);
+
         btn.addEventListener('click', () => {
             if (disabled) return;
             const id = btn.getAttribute('data-suspect-id');
             if (!id) return;
             onSelect?.(id);
         });
+
+        container.appendChild(btn);
     });
 }
 
@@ -206,41 +234,47 @@ function renderSuspectChoiceUI(state) {
 
     if (!area) return;
 
-    // ¿Ya resolvió el chequeo rápido de la misión 2?
-    const challengeItems = document.querySelectorAll('#challenge-hackers .challenge-item');
-    const answered = challengeItems.length > 0 && Array.from(challengeItems).every(item => item.querySelector('.choice.picked'));
-
-    if (!answered) {
-        area.innerHTML = '';
-        if (confirmBtn) confirmBtn.classList.add('hidden');
-        if (msg) msg.textContent = 'Primero completá el “Chequeo rápido” (clasificar las situaciones). Eso habilita la elección de sospechoso.';
-        return;
-    }
+    // Chequeo rápido (misión 2): se habilita SOLO si aciertan los 3.
+    const challengeItems = Array.from(document.querySelectorAll('#challenge-hackers .challenge-item'));
+    const answered = challengeItems.length > 0 && challengeItems.every(item => item.querySelector('.choice.picked'));
+    const allCorrect = answered && challengeItems.every(item => {
+        const picked = item.querySelector('.choice.picked');
+        return picked && picked.dataset.hackerType === item.dataset.hackerCorrect;
+    });
 
     const locked = !!(state.keys && state.keys.hackers);
-    renderSuspectSelector(area, state.suspect || null, locked, (id) => {
-        const cur = loadState();
-        cur.suspect = id;
-        saveState(cur);
-        updateHUD(cur);
-        // Re-render para marcar selección
-        renderSuspectChoiceUI(cur);
-    }, { showName: true, showProfile: true });
+    const allowSelect = allCorrect && !locked;
+
+    // Siempre se ven los sospechosos, pero quedan bloqueados hasta acertar las 3.
+    renderSuspectSelector(
+        area,
+        state.suspect || null,
+        !allowSelect,
+        (id) => {
+            if (!allowSelect) return;
+            const cur = loadState();
+            cur.suspect = id;
+            saveState(cur);
+            updateHUD(cur);
+            renderSuspectChoiceUI(cur);
+        },
+        { showName: true, showProfile: false }
+    );
 
     if (msg) {
         if (locked) {
-            msg.innerHTML = `Sospechoso registrado: <b>${getSuspectLabel(state.suspect)}</b>. En el cierre podés cambiarlo si las pistas te hacen dudar.`;
+            msg.innerHTML = `Sospechoso registrado: <b>${getSuspectLabel(state.suspect)}</b>. (En el cierre podés cambiarlo si las pistas te hacen dudar)`;
+        } else if (!answered) {
+            msg.innerHTML = 'Primero resolvé el <b>Chequeo rápido</b> (las 3 situaciones). Cuando estén las 3 correctas, se habilita la selección.';
+        } else if (!allCorrect) {
+            msg.innerHTML = 'Te falta corregir al menos una clasificación. <b>Solo si acertás las 3</b> se habilita la selección (buscá los que quedaron en rojo).';
         } else {
-            msg.textContent = 'Elegí un sospechoso principal. Podés cambiarlo ahora, pero cuando confirmes, queda registrado.';
+            msg.textContent = 'Listo: elegí tu sospechoso principal y desbloqueá el firewall.';
         }
     }
 
     if (confirmBtn) {
-        if (locked) {
-            confirmBtn.classList.add('hidden');
-        } else {
-            confirmBtn.classList.toggle('hidden', !state.suspect);
-        }
+        confirmBtn.classList.toggle('hidden', !(allowSelect && state.suspect));
     }
 }
 

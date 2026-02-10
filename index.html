@@ -6,9 +6,18 @@
     <title>Iniciando Protocolo ATLAS</title>
     <!-- REDIRECCIÓN INMEDIATA AL PRÓLOGO (LA BROMA) -->
     <script>
-        // Esta línea es la única función de este archivo: asegura que la broma se cargue primero.
-        // Se añade './' para asegurar que la ruta relativa sea interpretada correctamente en entornos estrictos.
-        window.location.replace('./prank_login.html');
+        (function () {
+            const KEY = 'INSTITUTO_PRANK_DONE_V1';
+            try {
+                if (localStorage.getItem(KEY) === '1') {
+                    window.location.replace('./game.html');
+                    return;
+                }
+            } catch (e) {
+                // Si el entorno bloquea localStorage, seguimos con la simulación.
+            }
+            window.location.replace('./prank_login.html');
+        })();
     </script>
 </head>
 <body style="background-color: #1a1a2e; color: #fff; text-align: center; padding-top: 50px; font-family: monospace;">

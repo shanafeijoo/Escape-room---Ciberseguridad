@@ -3,244 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingreso - Verificación rápida</title>
-    <!-- Sin dependencias externas: más compatible para abrir en cualquier entorno -->
+    <title>Simulación de Seguridad - Prólogo</title>
     <style>
+        /* --- ESTILO DE LA BROMA --- */
         :root {
-            --bg-color: #1a1a2e;
+            --bg-color: #0f0f1b;
             --text-color: #e0e0e0;
-            --primary: #ffeb3b; /* Amarillo para la alerta */
-            --error: #f44336; /* Rojo para el hackeo */
-            --success: #4caf50;
-            --dark-bg: #0f0f1b;
+            --accent-warning: #ffeb3b; 
+            --danger-red: #f44336;     
+            --success-green: #4ade80;
+            --input-bg: #1e293b;
         }
 
         body {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            background-color: var(--bg-color);
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1a1a2e;
             color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            margin: 0;
             padding: 20px;
         }
 
-        .login-container {
-            background-color: var(--dark-bg);
-            border: 3px solid var(--error);
+        .broma-container {
+            background-color: var(--bg-color);
+            border: 3px solid var(--danger-red);
             border-radius: 12px;
             padding: 40px;
-            box-shadow: 0 0 30px rgba(244, 67, 54, 0.5);
+            box-shadow: 0 0 30px rgba(244, 67, 54, 0.4);
             max-width: 450px;
             width: 100%;
             text-align: center;
         }
 
-        .input-group label {
-            display: block;
-            text-align: left;
-            margin-bottom: 5px;
-            color: var(--primary);
-            font-size: 0.9em;
-        }
-
-        .input-group input, .input-group textarea {
-            width: 100%;
-            padding: 10px;
+        h2 {
+            color: var(--danger-red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
             margin-bottom: 20px;
-            border: 1px solid var(--error);
-            background-color: #333;
-            color: white;
-            border-radius: 6px;
-            resize: none;
         }
 
-        .btn {
-            background-color: var(--error);
+        .instruccion {
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        /* Control de imágenes para que no se vean gigantes */
+        .img-pixar-mini {
+            width: 120px;
+            height: auto;
+            margin: 0 auto 20px;
+            display: block;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+        }
+
+        /* Estilo de Formulario */
+        .form-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            color: var(--success-green);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: var(--input-bg);
+            border: 1px solid #475569;
+            color: var(--success-green);
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .btn-broma {
+            background: #3b82f6;
             color: white;
-            padding: 12px 25px;
+            padding: 15px;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            width: 100%;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: background 0.3s;
         }
 
-        .btn:hover {
-            background-color: #d32f2f;
+        .btn-broma:hover {
+            background: #2563eb;
         }
 
-        /* Pantalla de resultado (Chequeo) */
-        .result-screen {
+        /* Pantalla de Resultado (Oculta al inicio) */
+        #hack-result {
             display: none;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
-            background-color: var(--dark-bg);
-            border: 3px solid var(--success);
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
         }
 
-        .result-screen h2 {
-            font-size: 2em;
-            color: var(--primary);
-            text-shadow: 0 0 10px rgba(255, 235, 59, 0.6);
-        }
-
-        .mini-animation {
-            width: 100%;
-            background: #0b0b12;
-            border: 1px dashed rgba(255, 235, 59, 0.55);
-            border-radius: 10px;
-            padding: 14px;
-            text-align: left;
-            font-size: 0.95em;
-            line-height: 1.35;
-            position: relative;
-            overflow: hidden;
-        }
-        .mini-animation::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(244,67,54,0.14), transparent);
-            transform: translateX(-100%);
-            animation: sweep 2.2s infinite;
-        }
-        @keyframes sweep {
-            0% { transform: translateX(-120%); }
-            100% { transform: translateX(120%); }
-        }
-
-        .tip {
-            border: 2px solid var(--primary);
+        .alert-box {
+            background: rgba(244, 67, 54, 0.15);
+            border: 1px solid var(--danger-red);
             padding: 15px;
             border-radius: 8px;
-            font-size: 0.95em;
-            text-align: justify;
+            margin: 20px 0;
+            font-size: 0.9rem;
         }
 
-        .result-title{
-            font-size: 2em;
-            color: var(--primary);
-            font-weight: 800;
-        }
-
-        .result-lead{
-            font-size: 1.1em;
-            color: var(--primary);
-        }
-
-        .fake-anim{
-            width: 100%;
-            border: 2px dashed rgba(255,235,59,0.55);
-            border-radius: 10px;
-            padding: 14px;
-            background: rgba(255,255,255,0.04);
-            text-align: left;
-        }
-
-        .fake-anim .line{
-            opacity: .9;
-            margin: 6px 0;
-            animation: glitchLine 1.2s infinite;
-        }
-
-        .fake-anim .line:nth-child(2){ animation-delay: .12s; }
-        .fake-anim .line:nth-child(3){ animation-delay: .24s; }
-        .fake-anim .line:nth-child(4){ animation-delay: .36s; }
-
-        @keyframes glitchLine{
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(2px); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-    <!-- PANTALLA 1: LOGIN TRAMPA -->
-    <div id="phishing-form" class="login-container">
-        <form id="prank-form">
-            <div class="input-group">
-                <label for="nombre">Nombre (puede ser tu apodo):</label>
-                <input type="text" id="nombre" name="nombre" required placeholder="Ej: Majo / Fede / Sofi">
-            </div>
+    <div class="broma-container">
+        <div id="phishing-form">
+            <h2>🔐 Acceso Institucional</h2>
+            <p class="instruccion">Por motivos de seguridad, verifique su identidad para acceder al panel.</p>
 
-            <div class="input-group">
-                <label for="cedula">Usuario CREA (solo para este ejercicio):</label>
-                <textarea id="cedula" name="cedula" rows="2" required placeholder="Ej: nombre.apellido (no uses datos reales si no querés)"></textarea>
-            </div>
+            <form id="fake-login">
+                <div class="form-group">
+                    <label for="user">Usuario / Correo</label>
+                    <input type="text" id="user" placeholder="nombre@instituto.edu" required>
+                </div>
 
-            <button type="submit" class="btn">Continuar</button>
-            <button type="button" id="btn-skip" class="btn" style="background:#444;margin-left:8px;">Saltar</button>
-        </form>
-    </div>
+                <div class="form-group">
+                    <label for="pass">Contraseña</label>
+                    <input type="password" id="pass" placeholder="••••••••" required>
+                </div>
 
-    <!-- PANTALLA 2: RESULTADO DE LA BROMA -->
-    <div id="hack-result" class="result-screen">
-        <h2 class="result-title">Chequeo completado</h2>
-        
-        <p class="result-lead">Te mostramos esto porque se parece a algo que pasa de verdad.</p>
-        <p>Un formulario puede parecer “oficial”, pero si pide datos que no corresponden o mete urgencia, puede ser un engaño (phishing).</p>
-
-        <!-- Mini “animación” local (sin iframes externos) -->
-        <div class="fake-anim" aria-label="Animación del chequeo">
-            <div class="line">[SCAN] Analizando formulario…</div>
-            <div class="line">[ALERTA] Señales de urgencia detectadas.</div>
-            <div class="line">[ALERTA] Solicitud inusual de datos.</div>
-            <div class="line">[OK] Esto es un ejercicio controlado ✅</div>
+                <button type="submit" class="btn-broma">Iniciar Sesión</button>
+            </form>
         </div>
 
-        <div class="tip mt-4 text-sm">
-            <p class="font-bold text-yellow-500 mb-2">💡 OJO: LECCIÓN APRENDIDA</p>
-            <p>
-                <strong>Atención con los QR que escaneás y los enlaces que abrís.</strong> 
-                Acabás de ser parte de un ejercicio de Ingeniería Social. 
-                En este entorno estás seguro/a, pero si ingresaste datos reales, 
-                recordá que <strong>nunca debés proporcionar información sensible</strong> 
-                sin verificar la fuente.
+        <div id="hack-result">
+            <h2 style="color: var(--accent-warning);">⚠️ ¡ALERTA DE SEGURIDAD!</h2>
+
+            <img src="phish.png" alt="Phishing Alert" class="img-pixar-mini" onerror="this.style.display='none'">
+
+            <div class="alert-box">
+                <p><strong>Esto fue una simulación de Phishing.</strong></p>
+                <p>Acabas de introducir tus datos en una página sin verificar la URL ni la procedencia.</p>
+            </div>
+
+            <p style="font-size: 0.85rem; line-height: 1.5;">
+                En el mundo real, un atacante ya tendría tu contraseña en su poder. 
+                Nunca proporciones información sensible en enlaces recibidos por correo.
             </p>
-        </div>
 
-        <button id="btn-start-game" class="btn" style="background:var(--success);">Entrar al Escape Room</button>
+            <button id="btn-final" class="btn-broma" style="background: var(--success-green); color: #000;">
+                ENTRAR AL ESCAPE ROOM
+            </button>
+        </div>
     </div>
 
     <script>
-        // Si ya pasó por esta pantalla, no repetimos la broma.
-        if (localStorage.getItem('INSTITUTO_prank_seen') === '1') {
-            window.location.replace('game.html');
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const KEY = 'INSTITUTO_PRANK_DONE_V1';
 
-        const goGame = () => {
-            localStorage.setItem('INSTITUTO_prank_seen', '1');
-            window.location.replace('game.html');
-        };
+            const form = document.getElementById('fake-login');
+            const loginSection = document.getElementById('phishing-form');
+            const resultSection = document.getElementById('hack-result');
+            const finalBtn = document.getElementById('btn-final');
 
-        document.getElementById('btn-skip')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            goGame();
+            // Si ya completó la simulación, no se repite
+            try {
+                if (localStorage.getItem(KEY) === '1') {
+                    window.location.href = './game.html';
+                    return;
+                }
+            } catch (e) {
+                // Si el entorno bloquea localStorage, seguirá viéndose la simulación.
+            }
+
+            // Al enviar el formulario falso
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Efecto de carga simple
+                const btn = form.querySelector('button');
+                btn.innerText = "Verificando...";
+                btn.disabled = true;
+
+                setTimeout(() => {
+                    loginSection.style.display = 'none';
+                    resultSection.style.display = 'flex';
+                }, 1000);
+            });
+
+            // Botón para ir al juego real
+            finalBtn.addEventListener('click', () => {
+                try { localStorage.setItem(KEY, '1'); } catch(e) {}
+                window.location.href = './game.html';
+            });
         });
-
-        document.getElementById('prank-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Ocultar la pantalla de phishing
-            document.getElementById('phishing-form').style.display = 'none';
-
-            // Marcar como visto (para no repetir)
-            localStorage.setItem('INSTITUTO_prank_seen', '1');
-
-            // Mostrar la pantalla de resultado
-            const resultScreen = document.getElementById('hack-result');
-            resultScreen.style.display = 'flex';
-        });
-
-        document.getElementById('btn-start-game').addEventListener('click', function() { goGame(); });
     </script>
+
 </body>
 </html>

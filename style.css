@@ -435,46 +435,94 @@ h1, h2, h3 {
     margin-bottom: 20px;
 }
 #suspect-choice-area, #final-suspect-choice-area {
+    margin-top: 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Contenedor para Misión 2 (fila) */
+.suspect-choice{
     display: flex;
-    gap: 20px;
+    gap: 18px;
     justify-content: center;
     flex-wrap: wrap;
-    margin-top: 15px;
-    width: 100%; /* Asegura que ocupe el ancho */
-    box-sizing: border-box;
 }
-.suspect-option {
+
+/* Tarjeta de sospechoso (mismo visor en Misión 2 y Final) */
+.suspect-option{
+    appearance: none;
+    border: 2px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.20);
+    border-radius: 18px;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    color: inherit;
+    padding: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+}
+.suspect-option:hover{
+    border-color: rgba(255,255,255,.22);
+    transform: translateY(-1px);
+}
+.suspect-option:focus-visible{
+    outline: 3px solid rgba(255,255,255,.75);
+    outline-offset: 3px;
+}
+.suspect-option:disabled{
+    opacity: .55;
+    cursor: not-allowed;
+    transform: none;
+}
+.suspect-option.active-choice{
+    border-color: rgba(0, 188, 212, .9);
+    box-shadow: 0 0 0 2px rgba(0, 188, 212, .22);
+    background: rgba(0, 188, 212, 0.12);
+}
+
+/* Variante compacta (Misión 2) */
+.suspect-option.suspect-compact{
+    flex-direction: column;
+    justify-content: center;
+    width: 120px;
+    text-align: center;
+    padding: 10px;
+}
+
+/* Foto oval */
+.suspect-oval{
+    width: 88px;
+    height: 112px;
+    border-radius: 50% / 60%;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.12);
+}
+.suspect-option.suspect-compact .suspect-oval{
+    width: 84px;
+    height: 108px;
+}
+.suspect-oval img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.suspect-text{
     display: flex;
     flex-direction: column;
+    gap: 4px;
+}
+.suspect-option.suspect-compact .suspect-text{
     align-items: center;
-    padding: 10px;
-    border: 2px solid var(--line);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background-color: var(--bg-color);
-    width: 120px; /* Ancho fijo para las opciones de sospechoso */
-    box-sizing: border-box;
 }
-.suspect-option:hover {
-    border-color: var(--primary);
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-}
-.suspect-option.active-choice {
-    border-color: var(--primary);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
-    background-color: rgba(0, 188, 212, 0.2); /* Fondo suave para la elección activa */
-}
-.suspect-option img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 5px;
-    border: 2px solid var(--line);
-}
-.suspect-option.active-choice img {
-    border-color: var(--primary);
+.suspect-name{
+    font-weight: 900;
+    letter-spacing: .2px;
 }
 
 .choice-final-suspect {
@@ -523,14 +571,11 @@ h1, h2, h3 {
     .folder-grid {
         grid-template-columns: 1fr; /* Una columna en móviles */
     }
-    #suspect-choice-area, #final-suspect-choice-area {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px; /* Menos espacio en vertical para móviles */
+    .suspect-choice{
+        gap: 14px;
     }
-    .suspect-option {
-        width: 100%;
-        max-width: 250px; /* Limita el ancho en vertical */
+    .suspect-option.suspect-compact{
+        width: 110px;
     }
 }
 
