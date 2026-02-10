@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Operación "Aula Segura" — Cierre del Caso</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="final">
+  <main id="final-page" class="final-wrapper">
+    <header class="final-header">
+      <h1>🏁 Protocolo de Finalización</h1>
+      <p class="final-sub">
+        Ya completaste el entrenamiento. Ahora toca cerrar el caso: <b>declarar un culpable</b>.
+        Podés cambiar tu sospechoso si, al revisar las pistas, te genera más desconfianza otro perfil.
+        <b>No tenés que justificar</b> tu cambio: leé las pistas y decidí.
+      </p>
+    </header>
+
+    <section id="final-locked" class="final-card hidden">
+      <h2>⛔ Terminal bloqueada</h2>
+      <p>Para acceder al cierre tenés que completar todas las misiones (6/6).</p>
+      <button id="go-back-map" class="btn primary" type="button">Volver al Mapa</button>
+    </section>
+
+    <section id="final-unlocked" class="final-card hidden">
+      <h2>🧩 Declaración del culpable</h2>
+      <p class="final-instructions">
+        Elegí el perfil que <b>más</b> te hace ruido según el Diario de Pistas. Recordá: esto es un cierre pedagógico.
+        La decisión te ayuda a conectar lo trabajado… y después te mostramos el “giro” del caso.
+      </p>
+
+      <div id="final-hint" class="final-hint hidden" role="alert"></div>
+
+      <div id="suspect-cards" class="suspect-grid" aria-label="Selección de sospechoso"></div>
+
+      <button id="btn-confirm-verdict" class="btn primary wide-btn" type="button">
+        Confirmar veredicto
+      </button>
+
+      <section id="verdict-area" class="final-card hidden" aria-live="polite">
+        <h3 id="verdict-title">Tu veredicto</h3>
+        <div id="verdict-body"></div>
+      </section>
+
+      <section id="final-video" class="final-card hidden">
+        <h3>🎬 Cierre (video)</h3>
+        <p class="final-note">
+          Si querés cambiar el video, editá <code>final.html</code> y reemplazá el ID en <code>data-video-id</code>.
+        </p>
+        <!-- CAMBIAR ESTE ID POR EL VIDEO QUE QUIERAS (solo el ID, no el link completo) -->
+        <div class="video-wrap">
+          <iframe
+            id="final-youtube-iframe"
+            title="Video de cierre"
+            data-video-id="ZbT5b0vhKEU"
+            src=""
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </section>
+
+      <section id="medal-section" class="final-card hidden">
+        <h3>🏅 Medalla — Súper Ciudadano Seguro</h3>
+        <p class="final-note">Ingresá tu nombre y generá tu medalla. Se descarga como imagen (PNG).</p>
+
+        <div class="medal-controls">
+          <label class="medal-label" for="player-name">Tu nombre</label>
+          <input id="player-name" class="medal-input" type="text" placeholder="Ej: Ana Pérez" maxlength="40" />
+          <button id="btn-generate-medal" class="btn secondary" type="button">Generar medalla</button>
+          <button id="btn-download-medal" class="btn primary hidden" type="button">Descargar PNG</button>
+          <div id="medal-msg" class="final-hint" aria-live="polite"></div>
+        </div>
+
+        <div class="medal-preview-wrap">
+          <canvas id="medal-canvas" class="hidden" aria-hidden="true"></canvas>
+          <img id="medal-preview" class="hidden" alt="Vista previa de la medalla generada" />
+        </div>
+
+        <button id="btn-restart-training" class="btn ghost wide-btn" type="button">
+          Reiniciar entrenamiento
+        </button>
+      </section>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

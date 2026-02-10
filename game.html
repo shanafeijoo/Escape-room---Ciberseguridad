@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Escape Room - Operación Aula Segura</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <canvas id="gridbg" aria-hidden="true"></canvas>
+
+    <section id="screen-start" class="screen active">
+        <h1 class="glitch" data-text="INSTITUTO">INSTITUTO</h1>
+        <h2>Operación Aula Segura: Agente Anónimo</h2>
+        <p class="intro-text">
+            Uruguay, un día cualquiera de clases. <br/>
+            Agente: en el INSTITUTO está pasando algo raro. Aparecen cuentas abiertas en las máquinas de préstamo, llegan correos extraños “desde Dirección”, y alguien anda compartiendo documentos sin cuidado.
+            <br/><br/>
+            Le dicen <b>“El Código Fantasma”</b> porque nadie lo ve, pero deja rastros: accesos raros, enlaces sospechosos y decisiones apuradas.
+            Tu misión es recorrer los sectores del INSTITUTO, resolver cada caso y aprender <b>un concepto de seguridad</b> por misión (explicado en simple). Al final, vas a unir las pistas y decidir qué pasó y quién estuvo detrás.
+        </p>
+        <button class="btn primary" id="btn-start">Entrar al Mapa</button>
+    </section>
+
+    <section id="screen-game" class="screen hidden">
+        <header class="hud">
+            <div>⚡ Puntos: <span id="hud-score">0</span></div>
+            <div>🔐 Firewalls: <span id="hud-keys">0/6</span></div>
+            <div id="hud-suspect">🔎 Sospechoso: PENDIENTE</div>
+        </header>
+
+        <main class="content-wrapper">
+            <div id="screen-map" class="sub-screen active">
+                <h2>📁 Mapa - Sectores del INSTITUTO</h2>
+                <div id="diary-component" class="diary-container">
+                  <button id="diary-toggle-btn" class="btn primary diary-btn" type="button">
+                    📔 DIARIO DE PISTAS <span id="diary-notification" class="hidden">!</span>
+                  </button>
+                  <div id="diary-panel" class="diary-content hidden" aria-live="polite">
+                    <h4>FRAGMENTOS RECUPERADOS</h4>
+                    <ul id="diary-list">
+                      <li class="empty-msg">No hay pistas registradas aún.</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="folder-grid">
+                    <div class="folder" data-mission-id="intro" aria-disabled="false">
+                        <h3>1. Dirección</h3>
+                        <p class="muted">Concepto: Tríada C-I-D (explicada)</p>
+                        <div class="mission-avatar-container"></div>
+                        <p class="mission-status">Pendiente</p>
+                        <button class="btn secondary" data-target-screen="mission1">Acceder</button>
+                    </div>
+
+                    <div class="folder" data-mission-id="hackers" aria-disabled="true">
+                        <h3>2. Sala de Informática</h3>
+                        <p class="muted">Concepto: Equipos compartidos</p>
+                        <div class="mission-avatar-container"></div>
+                        <p class="mission-status">Pendiente</p>
+                        <button class="btn secondary" data-target-screen="mission2">Acceder</button>
+                    </div>
+
+                    <div class="folder" data-mission-id="credenciales" aria-disabled="true">
+                        <h3>3. Identidad Digital</h3>
+                        <p class="muted">Concepto: Contraseñas + Doble verificación (MFA)</p>
+                        <div class="mission-avatar-container"></div>
+                        <p class="mission-status">Pendiente</p>
+                        <button class="btn secondary" data-target-screen="mission3">Acceder</button>
+                    </div>
+                    <div class="folder" data-mission-id="ing_social" aria-disabled="true">
+                        <h3>4. Correo del INSTITUTO</h3>
+                        <p class="muted">Concepto: Phishing (engaño por mail)</p>
+                        <div class="mission-avatar-container"></div>
+                        <p class="mission-status">Pendiente</p>
+                        <button class="btn secondary" data-target-screen="mission4">Acceder</button>
+                    </div>
+                    <div class="folder" data-mission-id="iot" aria-disabled="true">
+                        <h3>5. Dispositivos Personales</h3>
+                        <p class="muted">Concepto: IoT (Internet de las Cosas)</p>
+                        <div class="mission-avatar-container"></div>
+                        <p class="mission-status">Pendiente</p>
+                        <button class="btn secondary" data-target-screen="mission5">Acceder</button>
+                    </div>
+
+                    <div class="folder" data-mission-id="caso_final" aria-disabled="true">
+                        <h3>6. Caso final</h3>
+                        <p class="muted">Concepto: Enlaces acortados + documentos compartidos</p>
+                        <div class="mission-avatar-container"></div>
+                        <p class="mission-status">Pendiente</p>
+                        <button class="btn secondary" data-target-screen="mission6">Acceder</button>
+                    </div>
+
+                    <div class="folder terminal-folder">
+                        <h3>TERMINAL</h3>
+                        <p class="muted">Protocolo de Finalización</p>
+                        <p class="mission-status">Bloqueado</p>
+                        <button id="btn-terminal" class="btn primary" disabled>Tomar Decisión Final</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mission1" class="sub-screen hidden panel-container">
+                <div class="panel main-panel">
+                    <div class="briefing" id="mission1-briefing">
+                        <h2>1. Dirección: proteger la información (Tríada C‑I‑D)</h2>
+                        <img src="vega.png" class="avatar" alt="Dra. Vega">
+                        <h3 class="briefer-name">Informe de la Dra. Vega</h3>
+                        <div class="brief-grid">
+                          <div class="brief-col video-col">
+                            <div class="video-wrapper" id="video-wrapper-m1">
+                                
+                            </div>
+                          </div>
+                          <div class="brief-col text-col">
+                            <div class="concept-box">
+                                <h4>Concepto de la misión: Tríada C‑I‑D</h4>
+                                <p><b>Confidencialidad</b>: que solo vea la info quien corresponde. <b>Integridad</b>: que la info no se cambie sin permiso. <b>Disponibilidad</b>: que el sistema funcione cuando lo necesitás.</p>
+                                <p class="muted" style="margin-top:10px;">¿Por qué te conviene conocer C‑I‑D? Porque te da un <b>mapa rápido</b> para entender incidentes del INSTITUTO: si el problema es “alguien vio algo que no debía” (C), “alguien cambió algo” (I) o “no puedo acceder cuando lo necesito” (D). Con ese mapa, elegís mejores acciones: <b>permisos</b> correctos al compartir, <b>prioridades</b> al responder y <b>pruebas</b> para investigar.</p>
+                            </div>
+                            <p class="briefing-text">En Dirección detectaron accesos raros al registro de estudiantes y calificaciones. Antes de culpar a alguien, necesitamos entender <i>qué se dañó</i>: ¿se filtró información?, ¿se modificó?, ¿o el sistema se cayó?</p>
+                          </div>
+                        </div>
+                        <hr/>
+
+                        <!-- Chequeo rápido (debe ir enseguida de la lectura de conceptos) -->
+                        <div class="challenge-ui quick-check" id="quiz-m1" style="margin-top:18px;">
+                          <h3>Chequeo rápido (opción múltiple)</h3>
+                          <p class="muted">Estas preguntas te ayudan a conectar el concepto con situaciones reales del INSTITUTO. Al aprobar, se te revela la clave.</p>
+
+                          <div class="mcq" data-correct="b">
+                            <p><b>1)</b> Si alguien cambia una nota o una fecha en un documento sin permiso, ¿qué pilar se compromete más?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="Confidencialidad es quién <b>ve</b> la información. Acá el problema principal es que <b>la cambiaron</b>.">Confidencialidad</button>
+                              <button class="choice" data-mcq="b" data-explain="Integridad es que la info <b>no se altere</b> sin autorización y que puedas detectar cambios.">Integridad</button>
+                              <button class="choice" data-mcq="c" data-explain="Disponibilidad es que el sistema funcione. Acá el sistema funcionaba, pero la info fue alterada.">Disponibilidad</button>
+                            </div>
+                          </div>
+
+                          <div class="mcq" data-correct="a">
+                            <p><b>2)</b> ¿Por qué el historial de versiones (o registros) es importante para la integridad?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="Porque te permite ver <b>qué cambió</b>, <b>cuándo</b> y <b>quién</b>, y volver atrás si hace falta.">Porque da trazabilidad y permite revertir</button>
+                              <button class="choice" data-mcq="b" data-explain="El espacio en el servidor no es el punto. El punto es poder <b>auditar</b> cambios.">Porque ocupa menos espacio</button>
+                              <button class="choice" data-mcq="c" data-explain="Cerrar un documento no arregla cambios ni identifica responsables.">Porque evita que se edite</button>
+                            </div>
+                          </div>
+
+                          <div class="mcq" data-correct="c">
+                            <p><b>3)</b> ¿Qué configuración de permisos suele ser más segura para una planificación del INSTITUTO?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="“Cualquiera con el enlace puede editar” agranda la superficie de ataque: si se reenvía, cualquiera puede cambiarlo.">Cualquiera con el enlace puede editar</button>
+                              <button class="choice" data-mcq="b" data-explain="“Pública en internet” es todavía más riesgosa: cualquiera la encuentra y la edita/usa.">Pública en internet</button>
+                              <button class="choice" data-mcq="c" data-explain="Lo ideal es <b>editores específicos</b> (personas concretas) y el resto solo lectura.">Solo editores específicos + resto lectura</button>
+                            </div>
+                          </div>
+
+                          <div class="unlock" style="margin-top: 14px;">
+                            <button id="btn-check-m1-quiz" class="btn success">Verificar respuestas</button>
+                            <div id="m1-quiz-result" class="feedback" role="status" aria-live="polite"></div>
+                          </div>
+                        </div>
+
+                        <!-- Narrativa de misión -->
+                        <div id="challenge-cid" class="challenge-ui mission-narrative">
+                            <h3>Narrativa de misión: “La planilla no coincide”</h3>
+                            <p class="muted">Dirección recibió reclamos: “mi nota cambió”, “la fecha del parcial se movió” y “alguien vio devoluciones privadas”. Tu trabajo: clasificar qué se rompió (C, I o D) para saber <b>qué investigar</b> y <b>qué priorizar</b>.</p>
+                            <h4 style="margin-top:14px;">ASIGNACIÓN C‑I‑D (en cosas del INSTITUTO)</h4>
+                            <p class="muted">Selecciona el principio de la tríada (Confidencialidad, Integridad, Disponibilidad) que se compromete más en cada caso:</p>
+
+                            <div class="challenge-item" data-cid-correct="CONFIDENCIALIDAD">
+                                <span>1. Alguien entra a tu <b>CREA</b> y lee mensajes privados o devoluciones del docente.</span>
+                                <div class="choices">
+                                    <button class="choice" data-key="CONFIDENCIALIDAD">Confidencialidad</button>
+                                    <button class="choice" data-key="INTEGRIDAD">Integridad</button>
+                                    <button class="choice" data-key="DISPONIBILIDAD">Disponibilidad</button>
+                                </div>
+                            </div>
+                            <div class="challenge-item" data-cid-correct="DISPONIBILIDAD">
+                                <span>2. El día de entrega, <b>CREA</b> o el correo no cargan y no podés subir el trabajo.</span>
+                                <div class="choices">
+                                    <button class="choice" data-key="CONFIDENCIALIDAD">Confidencialidad</button>
+                                    <button class="choice" data-key="INTEGRIDAD">Integridad</button>
+                                    <button class="choice" data-key="DISPONIBILIDAD">Disponibilidad</button>
+                                </div>
+                            </div>
+                            <div class="challenge-item" data-cid-correct="INTEGRIDAD">
+                                <span>3. En el sistema aparece una nota cambiada (por ejemplo, figura “insuficiente” cuando no corresponde).</span>
+                                <div class="choices">
+                                    <button class="choice" data-key="CONFIDENCIALIDAD">Confidencialidad</button>
+                                    <button class="choice" data-key="INTEGRIDAD">Integridad</button>
+                                    <button class="choice" data-key="DISPONIBILIDAD">Disponibilidad</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="unlock">
+                        <label for="mission1-challenge-key">Para completar tu misión, deberás ingresar la palabra clave.
+Pista: se trata de uno de los pilares fundamentales de la ciberseguridad.
+Si ordenaras sus iniciales alfabéticamente, sería la primera. ¿Ya sabes cuál es? </label>
+                        <input id="mission1-challenge-key" type="text" placeholder="Clave" />
+                        <button id="mission1-btn-submit" class="btn success">Desbloquear Firewall</button>
+                    </div>
+
+                    <div id="mission1-feedback" class="feedback" role="status" aria-live="polite"></div>
+                    <div class="footer-actions">
+                        <button class="btn secondary" data-target-screen="screen-map">Volver al mapa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mission2" class="sub-screen hidden panel-container">
+                <div class="panel main-panel">
+                    <div class="briefing" id="mission2-briefing">
+                        <h2>2. Sala de Informática: equipos compartidos</h2>
+                        <img src="kai.png" class="avatar" alt="Kai Byte">
+                        <h3 class="briefer-name">Informe de Kai Byte</h3>
+                        <div class="brief-grid">
+                            <div class="brief-col video-col">
+                                <div class="video-wrapper" id="video-wrapper-m2"></div>
+                        </div>
+                        <div class="brief-col text-col">
+                            <div class="concept-box">
+                                <h4>Concepto de la misión: equipos compartidos</h4>
+                                <p>En el INSTITUTO hay <b>máquinas de préstamo</b> y PCs del laboratorio. En estos casos, el riesgo no es “hacking de película”: suele ser <b>dejar una sesión abierta</b> (quedás logueado) o <b>guardar contraseñas</b> en el navegador. Eso permite que otra persona entre a tu CREA o Gmail sin saber tu clave.</p>
+                            </div>
+                            <p class="briefing-text">En el laboratorio aparecieron cuentas abiertas y cambios raros en trabajos. No necesitamos acusar por “cara”: necesitamos mirar <b>conductas</b>. Vas a analizar 3 situaciones reales y decidir cuáles son prácticas seguras y cuáles ponen en riesgo al INSTITUTO.</p>
+                              </div>
+                        </div>
+
+                        <hr/>
+
+	                        <!-- Chequeo rápido (debe ir enseguida de la lectura de conceptos) -->
+	                        <div class="challenge-ui quick-check" id="quiz-m2" style="margin-top:18px;">
+                          <h3>Chequeo rápido (opción múltiple)</h3>
+                          <p class="muted">Lo que parece “detalle” en un equipo compartido puede ser la puerta de entrada. Respondé y ganá puntos extra.</p>
+
+                          <div class="mcq" data-correct="b">
+                            <p><b>1)</b> Terminás de usar una PC de préstamo. ¿Qué secuencia es la más segura?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="Cerrar pestañas no cierra tu sesión: podés seguir logueado/a aunque no se vea.">Cerrar pestañas y apagar el monitor</button>
+                              <button class="choice" data-mcq="b" data-explain="Primero cerrar sesión, luego borrar datos del navegador, y si podés reiniciar.">Cerrar sesión → borrar datos → cerrar navegador (→ reiniciar)</button>
+                              <button class="choice" data-mcq="c" data-explain="Apagar sin cerrar sesión puede dejar sesiones activas o cuentas abiertas si el equipo no reinicia.">Apagar la PC directo</button>
+                            </div>
+                          </div>
+
+                          <div class="mcq" data-correct="c">
+                            <p><b>2)</b> Encontrás contraseñas guardadas en el navegador de una PC del INSTITUTO. ¿Qué hacés?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="No es “chusmear”: es acceder a datos privados. Además te metés en un problema.">Las mirás para ver de quién son</button>
+                              <button class="choice" data-mcq="b" data-explain="Borrarlas sin avisar puede perder evidencia y no arregla la causa (la práctica).">Las borrás sin decir nada</button>
+                              <button class="choice" data-mcq="c" data-explain="Lo correcto es avisar al referente/adscripción y proponer limpieza y cartelera de buenas prácticas, sin acceder a contraseñas ajenas.">Reportás sin verlas y pedís limpieza institucional</button>
+                            </div>
+                          </div>
+
+                          <div class="mcq" data-correct="a">
+                            <p><b>3)</b> ¿Cuál es el riesgo más directo de dejar Gmail/CREA abierto en una PC compartida?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="La otra persona puede actuar como vos: enviar correos, cambiar archivos o acceder a datos.">Que alguien use tu cuenta como si fueras vos</button>
+                              <button class="choice" data-mcq="b" data-explain="La batería no es el problema de seguridad.">Que gaste batería</button>
+                              <button class="choice" data-mcq="c" data-explain="El problema no es el teclado: es la sesión abierta.">Que se rompa el teclado</button>
+                            </div>
+                          </div>
+
+                          <div class="unlock" style="margin-top: 14px;">
+                            <button id="btn-check-m2-quiz" class="btn success">Verificar respuestas</button>
+                            <div id="m2-quiz-result" class="feedback" role="status" aria-live="polite"></div>
+                          </div>
+                        </div>
+
+	                        <!-- Narrativa de misión -->
+	                        <div id="challenge-hackers" class="challenge-ui mission-narrative">
+	                            <h3>Narrativa de misión: “Sesiones fantasma”</h3>
+	                            <p class="muted">A las 8:00, una PC de préstamo arranca con Gmail y CREA abiertos. No es “magia”: es una costumbre peligrosa. Clasificá las prácticas y después elegí el perfil que más se repite (no por “culpa”, sino por <b>hábitos</b>).</p>
+	
+	                            <h4 style="margin-top:14px;">PRÁCTICAS EN RIESGO (LO QUE SÍ PASA EN UN INSTITUTO)</h4>
+	                            <p class="muted">Clasificá cada caso según el nivel de riesgo: <b>Bajo</b> (bien), <b>Medio</b> (dudoso) o <b>Alto</b> (peligroso). Cada error resta puntos. Cuando termines, vas a elegir un sospechoso (no por “malo”, sino por sus hábitos).</p>
+	
+	                            <div class="challenge-item" data-hacker-correct="Alto">
+	                                <span class="hacker-description"><b>Vega (docente)</b>: deja su Gmail abierto en una máquina de préstamo “porque es un minuto”; el navegador ofrece “guardar contraseña” y acepta.</span>
+	                                <div class="choices">
+	                                    <button class="choice" data-hacker-type="Bajo">Bajo</button>
+	                                    <button class="choice" data-hacker-type="Medio">Medio</button>
+	                                    <button class="choice" data-hacker-type="Alto">Alto</button>
+	                                </div>
+	                            </div>
+	                            <div class="challenge-item" data-hacker-correct="Medio">
+	                                <span class="hacker-description"><b>Leo (adscripción)</b>: usa una contraseña “fácil de recordar” y la repite en CREA y en el correo. No la comparte, pero no activa doble verificación.</span>
+	                                <div class="choices">
+	                                    <button class="choice" data-hacker-type="Bajo">Bajo</button>
+	                                    <button class="choice" data-hacker-type="Medio">Medio</button>
+	                                    <button class="choice" data-hacker-type="Alto">Alto</button>
+	                                </div>
+	                            </div>
+	                            <div class="challenge-item" data-hacker-correct="Alto">
+	                                <span class="hacker-description"><b>Kael (estudiante)</b>: en las PCs del lab queda “logueado” en CREA; otros entran y mandan mensajes desde su cuenta. Dice: “No pasa nada, es solo el recreo”.</span>
+	                                <div class="choices">
+	                                    <button class="choice" data-hacker-type="Bajo">Bajo</button>
+	                                    <button class="choice" data-hacker-type="Medio">Medio</button>
+	                                    <button class="choice" data-hacker-type="Alto">Alto</button>
+	                                </div>
+	                            </div>
+	                        </div>
+
+                        <div id="suspect-ui-container" style="margin-top: 30px;">
+                            <h3>Elige a tu Sospechoso Principal</h3>
+                            <p class="muted" id="suspect-selection-message">Clasifica a los tres agentes arriba para habilitar la selección.</p>
+                            <div id="suspect-choice-area" style="display:flex; gap:20px; justify-content:center; margin-top:15px;">
+                            </div>
+                            <button id="btn-confirm-suspect" class="btn primary" style="margin-top:15px; display:none;">Confirmar Sospechoso</button>
+                        </div>
+                    </div>
+
+                    <div id="mission2-feedback" class="feedback" role="status" aria-live="polite"></div>
+                    <div class="footer-actions">
+                        <button class="btn secondary" data-target-screen="screen-map">Volver al mapa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mission3" class="sub-screen hidden panel-container">
+                <div class="panel main-panel">
+                    <div class="briefing" id="mission3-briefing">
+                        <h2>3. Identidad Digital: contraseñas + doble verificación</h2>
+                        <img src="Cipher.png" class="avatar" alt="Dra. Cipher">
+                        <h3 class="briefer-name">Informe de la Dra. Cipher</h3>
+                        <div class="brief-grid">
+                        <div class="brief-col video-col">
+                        <div class="video-wrapper" id="video-wrapper-m3"></div>
+                        </div>
+                          <div class="brief-col text-col">
+
+<div class="concept-box">
+  <h4>Concepto de la misión: contraseñas seguras + privacidad + MFA</h4>
+  <p><b>Tu contraseña es la llave de tu privacidad</b>: si alguien entra a tu Gmail/CREA, puede leer mensajes, ver datos personales, cambiar archivos o hacerse pasar por vos.</p>
+  <p><b>Contraseña segura</b> no es “rara”: es <b>larga</b> y <b>única</b>. Lo más práctico suele ser una <b>frase</b> (passphrase) con separadores. Ejemplo: <i>"MateConBizcochos_EnRecreo!"</i> (sin datos personales).</p>
+  <p><b>MFA</b> (doble verificación) agrega una segunda barrera: además de la contraseña, te pide un código/app/confirmación. Así, aunque alguien robe tu clave, <b>le falta el segundo factor</b>.</p>
+</div>
+<p class="briefing-text">Detectamos intentos de entrar probando contraseñas “una atrás de otra” (pasa cuando se filtran claves viejas o se repiten claves en varios servicios). Para recuperar el control, vas a explorar una “habitación oscura” del sistema y encontrar un <b>código de 4 cifras</b>. Pista: pensá en hábitos que cuidan tu privacidad: contraseñas largas y únicas + MFA.</p>
+                        </div>
+                        </div>
+
+                        <hr/>
+
+                        <!-- Chequeo rápido (debe ir enseguida de la lectura de conceptos) -->
+                        <div class="challenge-ui quick-check" id="quiz-m3" style="margin: 20px 0;">
+                          <h3>Chequeo rápido (opción múltiple)</h3>
+                          <p class="muted">Acá aparecen términos que a veces suenan “técnicos”. Te los traducimos y lo conectamos con algo bien cotidiano: <b>privacidad</b>. Si aprobás, ganás puntos extra.</p>
+
+                          <div class="mcq" data-correct="b">
+                            <p><b>1)</b> ¿Qué hace más difícil que te adivinen o roben la contraseña?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="Las contraseñas cortas se adivinan o se prueban rápido.">Que sea corta y fácil</button>
+                              <button class="choice" data-mcq="b" data-explain="Sí: lo más fuerte suele ser una <b>frase larga</b> y <b>única</b> por servicio.">Que sea larga (frase) y única</button>
+                              <button class="choice" data-mcq="c" data-explain="Cambiar seguido no sirve si siempre repetís o son débiles.">Cambiarla todos los meses aunque sea débil</button>
+                            </div>
+                          </div>
+
+                          <div class="mcq" data-correct="c">
+                            <p><b>2)</b> ¿Qué práctica es la más peligrosa con contraseñas?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="Cambiar seguido no arregla si repetís o si son débiles.">Cambiarla todos los meses</button>
+                              <button class="choice" data-mcq="b" data-explain="Un gestor puede ayudar, pero acá la práctica más peligrosa es otra.">Usar un gestor de contraseñas</button>
+                              <button class="choice" data-mcq="c" data-explain="Sí: si una se filtra, abren todo. Cada servicio debería tener una clave distinta.">Repetir la misma clave en varios servicios</button>
+                            </div>
+                          </div>
+
+                          <div class="mcq" data-correct="b">
+                            <p><b>3)</b> ¿Qué significa MFA (doble verificación)?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="No: eso es solo un factor (la contraseña).">Solo una contraseña</button>
+                              <button class="choice" data-mcq="b" data-explain="Sí: contraseña + otro factor (código en el cel, app, huella).">Más de una prueba para entrar</button>
+                              <button class="choice" data-mcq="c" data-explain="No: eso es limpieza digital, no autenticación.">Borrar historial del navegador</button>
+                            </div>
+                          </div>
+
+                          <div class="mcq" data-correct="a">
+                            <p><b>4)</b> ¿Por qué esto es “privacidad” y no solo “seguridad del INSTITUTO”?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="Exacto: correo y CREA tienen info personal y académica. Si entran, leen, suplantan y te exponen.">Porque pueden acceder a tus correos, datos y trabajos</button>
+                              <button class="choice" data-mcq="b" data-explain="No: puede afectar a vos y al INSTITUTO. No es solo “pérdida de tiempo”.">Porque solo te hace perder tiempo</button>
+                              <button class="choice" data-mcq="c" data-explain="No: eso es un mito. Incluso con buena red, una clave filtrada es una puerta.">Porque la red del INSTITUTO siempre es segura</button>
+                            </div>
+                          </div>
+
+                          <div class="unlock" style="margin-top: 14px;">
+                            <button id="btn-check-m3-quiz" class="btn success">Verificar respuestas</button>
+                            <div id="m3-quiz-result" class="feedback" role="status" aria-live="polite"></div>
+                          </div>
+
+                          <p class="muted" style="margin-top:10px; text-align:center;">
+                            Tip: una contraseña fuerte suele ser <b>larga</b> (frase) y <b>única</b>. Ejemplo: <i>“MateConBizcochos_EnRecreo!”</i> (no uses datos personales).
+                          </p>
+                        </div>
+
+                        <!-- Narrativa de misión -->
+                        <div class="challenge-ui mission-narrative" id="m3-genially" style="margin: 20px 0;">
+                          <h3>Narrativa de misión: “Habitación oscura” (Genially)</h3>
+                          <p class="muted">Algo está forzando intentos de acceso. Tu tarea es entrar al “cuarto de evidencias” y encontrar el <b>código de 4 cifras</b>. Ese código restaura el acceso al sistema de credenciales. (Tip: mirá detalles, notas y objetos clickeables.)</p>
+                          <div id="genially-container-wrapper-m3" style="display:block; width:100%; min-height:500px; margin: 10px 0;"></div>
+                        </div>
+
+</div>
+
+                    <div class="unlock">
+                        <label for="mission3-challenge-key">Para continuar, deberás explorar una 'habitación oscura' de nuestro sistema de pruebas y encontrar un código, una clave numérica de 4 cifras que restaura el acceso al sistema de credenciales crítico. Pista: ten en cuenta cuales son las buenas prácticas de gestión de credenciales.</label>
+                        <input id="mission3-challenge-key" type="text" placeholder="Clave numérica" maxlength="4" />
+                        <button id="mission3-btn-submit" class="btn success">Desbloquear Firewall</button>
+                    </div>
+
+                    <div id="mission3-feedback" class="feedback" role="status" aria-live="polite"></div>
+                    <div class="footer-actions">
+                        <button class="btn secondary" data-target-screen="screen-map">Volver al mapa</button>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+
+            <div id="mission4" class="sub-screen hidden panel-container">
+                <div class="panel main-panel">
+                    <div class="briefing" id="mission4-briefing">
+                        <h2>4. Correo del INSTITUTO: detectar phishing</h2>
+                        <img src="phish.png" class="avatar" alt="Agente Phish">
+                        <h3 class="briefer-name">Informe del Agente Phish</h3>
+                        <div class="brief-grid">
+                        <div class="brief-col video-col">
+                        <div class="video-wrapper" id="video-wrapper-m4"></div>
+                        </div>
+                        <div class="brief-col text-col">
+                        <div class="concept-box">
+                          <h4>Concepto de la misión: phishing</h4>
+                          <p><b>Phishing</b> es un engaño: alguien se hace pasar por una persona real (por ejemplo Dirección) para que hagas clic o entregues datos. Suele usar <b>urgencia</b> (“es ahora o perdés algo”), y un <b>enlace</b> que parece normal pero no lo es.</p>
+                        </div>
+                        <p class="briefing-text">Hoy llegó un correo “de la Directora” con su foto de perfil. Pide datos de un responsable para “descargar el boletín” desde un enlace. Tu trabajo es detectar señales sospechosas y decidir qué harías.</p>
+                        </div>
+                        </div>
+
+                        <hr/>
+
+                      <!-- Chequeo rápido (debe ir enseguida de la lectura de conceptos) -->
+                      <div class="challenge-ui quick-check" id="phishing-quiz">
+                          <h3>Chequeo rápido (opción múltiple)</h3>
+                          <p class="muted">Respondé y al final se te muestra la clave de la misión.</p>
+
+                          <div class="mcq" data-correct="b">
+                            <p><b>1)</b> ¿Qué señal es la más sospechosa?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="Una foto se puede copiar. No prueba identidad.">Tiene foto de perfil.</button>
+                              <button class="choice" data-mcq="b" data-explain="Correcto: pedir datos sensibles + apurar con urgencia es típico de phishing.">Pide datos personales por correo y usa urgencia.</button>
+                              <button class="choice" data-mcq="c" data-explain="Decir “Hola” no es señal de riesgo. Mirá remitente, enlace y pedido.">Dice “Hola”.</button>
+                            </div>
+                          </div>
+
+                          <div class="mcq" data-correct="c">
+                            <p><b>2)</b> ¿Por qué un enlace acortado (tipo bit.ly) puede ser riesgoso?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="No siempre. El problema es que no ves a dónde va.">Porque siempre es virus.</button>
+                              <button class="choice" data-mcq="b" data-explain="La rapidez no tiene que ver con seguridad.">Porque es más rápido.</button>
+                              <button class="choice" data-mcq="c" data-explain="Correcto: acorta el link y oculta el destino real.">Porque no ves el destino real antes de entrar.</button>
+                            </div>
+                          </div>
+
+                          <div class="mcq" data-correct="a">
+                            <p><b>3)</b> ¿Qué harías primero?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="Correcto: verificá por un canal alternativo antes de hacer clic o dar datos.">Verificar por otro medio (preguntar en persona / llamar al INSTITUTO).</button>
+                              <button class="choice" data-mcq="b" data-explain="Reenviar amplifica el ataque. Primero verificá.">Reenviar a todo el grupo.</button>
+                              <button class="choice" data-mcq="c" data-explain="Dar datos sin verificar es justamente lo que busca el phishing.">Responder con los datos “para cumplir”.</button>
+                            </div>
+                          </div>
+
+                          <div class="mcq" data-correct="b">
+                            <p><b>4)</b> ¿Qué emoción están usando para apurarte?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="No: el correo te apura con amenaza, no con alegría.">Alegría</button>
+                              <button class="choice" data-mcq="b" data-explain="Correcto: la urgencia te hace actuar sin pensar.">Urgencia</button>
+                              <button class="choice" data-mcq="c" data-explain="No: no tiene que ver con eso.">Sueño</button>
+                            </div>
+                          </div>
+
+                          <div class="unlock" style="margin-top: 14px;">
+                            <button id="btn-check-phishing-quiz" class="btn success">Verificar respuestas</button>
+                            <div id="phishing-quiz-result" class="feedback" role="status" aria-live="polite"></div>
+                          </div>
+                      </div>
+
+                      <!-- Narrativa de misión -->
+                      <div id="phishing-sim" class="phishing-sim mission-narrative" style="margin: 20px 0;">
+                        <h3>Narrativa de misión: el correo “de Dirección”</h3>
+                        <p class="muted">Te cae un mail con foto y tono formal. Parece real… hasta que mirás con lupa. Observá el remitente, el pedido y el enlace. <b>No hagas clic</b>: solo analizá.</p>
+                        <div class="email-window" aria-label="Simulación de correo">
+                          <div class="email-topbar">
+                            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                            <span class="email-app">Gmail</span>
+                          </div>
+                          <div class="email-card" id="phishing-email-card">
+                            <div class="email-header">
+                              <img src="directora.png" class="email-avatar" alt="Foto de perfil">
+                              <div>
+                                <div class="email-from"><b>Dirección</b> &lt;direccion.INSTITUTO@correo-uy.educ&gt;</div>
+                                <div class="email-subject">URGENTE: Boletín disponible – confirmar datos del responsable</div>
+                                <div class="email-meta">Para: estudiantes • Hoy</div>
+                              </div>
+                            </div>
+                            <div class="email-body">
+                              <p>Hola,</p>
+                              <p>Necesitamos <b>ya</b> los datos de un responsable (nombre, CI y teléfono) para habilitar la descarga del boletín.</p>
+                              <p>Si no se completa <b>hoy</b>, el sistema bloquea la entrega.</p>
+                              <p>
+                                👉 Descargar boletín: <span class="fake-link">https://bit.ly/boletin-INSTITUTO</span>
+                              </p>
+                              <p class="muted">— Dirección</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="unlock">
+                        <label for="mission4-challenge-key">Clave de misión (se obtiene al aprobar el chequeo):</label>
+                        <input id="mission4-challenge-key" type="text" placeholder="Clave" />
+                        <button id="mission4-btn-submit" class="btn success">Desbloquear Firewall</button>
+                    </div>
+
+                    <div id="mission4-feedback" class="feedback" role="status" aria-live="polite"></div>
+                    <div class="footer-actions">
+                        <button class="btn secondary" data-target-screen="screen-map">Volver al mapa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mission5" class="sub-screen hidden panel-container">
+                <div class="panel main-panel">
+                    <div class="briefing" id="mission5-briefing">
+                        <h2>5. Dispositivos personales: riesgos IoT</h2>
+                        <img src="nodea.png" class="avatar" alt="Ing. Nodea">
+                        <h3 class="briefer-name">Informe del Ing. Nodea</h3>
+                        <div class="brief-grid">
+                        <div class="brief-col video-col">
+                        <div class="video-wrapper" id="video-wrapper-m5"></div>
+                        </div>
+                        <div class="brief-col text-col">
+                        <div class="concept-box">
+                            <h4>Concepto de la misión: IoT</h4>
+                            <p><b>IoT</b> significa <b>Internet de las Cosas</b>: objetos “comunes” conectados (smartwatch, auriculares, cámaras, TV). El riesgo es que juntan datos, se conectan a redes y a veces quedan con <b>configuraciones inseguras</b> o sin actualizar.</p>
+                        </div>
+                        <p class="briefing-text">En el INSTITUTO no solo hay PCs: también entran <b>celulares</b> y <b>smartwatch</b>. Si un dispositivo se conecta a la Wi‑Fi, al Bluetooth o a apps con permisos de más, puede exponer información (ubicación, contactos) o abrir puertas a cuentas del INSTITUTO si se sincroniza con el correo. Tu misión es reconocer riesgos típicos y elegir la mejor medida.</p>
+                          </div>
+                        </div>
+
+                        <hr/>
+                        <div class="challenge-ui quick-check" id="quiz-m5" style="margin-top:18px;">
+                          <h3>Chequeo rápido (opción múltiple)</h3>
+                          <p class="muted">IoT suena raro, pero lo ves todos los días. Respondé y al aprobar se te muestra la clave de misión.</p>
+
+                          <div class="mcq" data-correct="b">
+                            <p><b>1)</b> ¿Qué es IoT (Internet de las Cosas) en el INSTITUTO?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="No: IoT no es una red social.">Una app de redes sociales</button>
+                              <button class="choice" data-mcq="b" data-explain="Sí: son objetos conectados que mandan/reciben datos (reloj, auriculares, etc.).">Objetos conectados que intercambian datos</button>
+                              <button class="choice" data-mcq="c" data-explain="No: eso sería solo “internet” en general.">Cualquier página web</button>
+                            </div>
+                          </div>
+
+                          <div class="mcq" data-correct="a">
+                            <p><b>2)</b> ¿Cuál es un riesgo real de tener el correo del INSTITUTO sincronizado en un smartwatch?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="Correcto: puede mostrar notificaciones con info sensible, y si se pierde/roba, queda expuesto.">Que se vean correos/avisos en la pantalla</button>
+                              <button class="choice" data-mcq="b" data-explain="El color no tiene impacto de seguridad.">Que cambie el color del reloj</button>
+                              <button class="choice" data-mcq="c" data-explain="La música no es el problema central.">Que suene música</button>
+                            </div>
+                          </div>
+
+                          <div class="mcq" data-correct="c">
+                            <p><b>3)</b> Una app “para organizar clases” pide micrófono y ubicación en segundo plano. ¿Qué te debería hacer pensar?</p>
+                            <div class="choices">
+                              <button class="choice" data-mcq="a" data-explain="Aunque sea útil, permisos excesivos son una señal de alerta.">Que está bien, porque es gratis</button>
+                              <button class="choice" data-mcq="b" data-explain="No es una actualización: es una solicitud de permisos innecesarios.">Que es normal para actualizar</button>
+                              <button class="choice" data-mcq="c" data-explain="Sí: puede estar recolectando datos de más. Lo ideal es minimizar permisos y usar apps confiables.">Que pide permisos de más (bandera roja)</button>
+                            </div>
+                          </div>
+
+                          <div class="unlock" style="margin-top: 14px;">
+                            <button id="btn-check-m5-quiz" class="btn success">Verificar respuestas</button>
+                            <div id="m5-quiz-result" class="feedback" role="status" aria-live="polite"></div>
+                          </div>
+                        </div>
+
+                        <div id="challenge-iot" class="challenge-ui mission-narrative">
+                            <h3>Narrativa de misión: la Wi‑Fi no distingue “trabajo” de “personal”</h3>
+                            <p class="muted">Te cae un reporte: hay smartwatches y celulares sincronizados con el correo del INSTITUTO. Tenés que decidir qué prácticas bajan el riesgo en serio.</p>
+
+                            <div class="challenge-item" data-iot-correct="Actualizar sistema y apps del dispositivo.">
+                                <span>1) ¿Qué es lo más importante para reducir fallas conocidas en un smartwatch?</span>
+                                <div class="choices">
+                                    <button class="choice" data-iot-option="Cambiarle el color de la pantalla.">Cambiarle el color de la pantalla.</button>
+                                    <button class="choice" data-iot-option="Actualizar sistema y apps del dispositivo.">Actualizar sistema y apps del dispositivo.</button>
+                                    <button class="choice" data-iot-option="Usarlo siempre con brillo al máximo.">Usarlo siempre con brillo al máximo.</button>
+                                </div>
+                            </div>
+
+                            <div class="challenge-item" data-iot-correct="Revisar permisos y evitar sincronizar en PCs compartidas.">
+                                <span>2) Si tu reloj/celular se sincroniza con tu correo del INSTITUTO, ¿qué práctica ayuda más?</span>
+                                <div class="choices">
+                                    <button class="choice" data-iot-option="Revisar permisos y evitar sincronizar en PCs compartidas.">Revisar permisos y evitar sincronizar en PCs compartidas.</button>
+                                    <button class="choice" data-iot-option="Prestarlo para que otros lo prueben.">Prestarlo para que otros lo prueben.</button>
+                                    <button class="choice" data-iot-option="Desactivar el PIN del teléfono.">Desactivar el PIN del teléfono.</button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="unlock">
+                        <label for="mission5-challenge-key">Clave de la misión: la acción más importante para bajar riesgos en dispositivos (la vimos arriba). Escribí la palabra en mayúsculas.</label>
+                        <input id="mission5-challenge-key" type="text" placeholder="Clave" />
+                        <button id="mission5-btn-submit" class="btn success">Desbloquear Firewall</button>
+                    </div>
+
+                    <div id="mission5-feedback" class="feedback" role="status" aria-live="polite"></div>
+                    <div class="footer-actions">
+                        <button class="btn secondary" data-target-screen="screen-map">Volver al mapa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mission6" class="sub-screen hidden panel-container">
+                <div class="panel main-panel">
+                    <div class="briefing" id="mission6-briefing">
+                        <h2>6. Caso final: enlace acortado + documento mal compartido</h2>
+                        <img src="kai.png" class="avatar" alt="Soporte">
+                        <h3 class="briefer-name">Informe del Equipo de Soporte</h3>
+
+                        <div class="brief-grid">
+                            <div class="brief-col video-col">
+                                <div class="video-wrapper" id="video-wrapper-m6"></div>
+                            </div>
+                            <div class="brief-col text-col">
+                                <div class="concept-box">
+                                    <h4>Conceptos del caso</h4>
+                                    <p><b>Enlace acortado</b>: tapa la dirección real. Puede usarse para engañar. <b>WPS</b> es una suite de documentos (como Word/Docs). El riesgo está en <b>cómo se comparte</b>: “cualquiera con el enlace puede editar” = problema.</p>
+                                </div>
+                                <p class="briefing-text">Llegó un Gmail al curso con un enlace acortado para “ver un documento del boletín”. Al abrirlo, aparece un documento WPS compartido con permisos raros. Tu tarea es decidir qué señales son peligrosas y cuál sería la reacción correcta para proteger al INSTITUTO.</p>
+                            </div>
+                        </div>
+
+                        <hr/>
+
+                        <!-- Chequeo rápido: primero conceptos, luego decisiones -->
+                        <div class="challenge-ui quick-check" id="casefinal-quiz">
+                            <h3>Chequeo rápido (decisiones clave)</h3>
+                            <p class="muted">Respondé todo para obtener la clave final.</p>
+
+                            <div class="mcq" data-correct="c">
+                                <p><b>1)</b> ¿Qué combinación es la más peligrosa?</p>
+                                <div class="choices">
+                                    <button class="choice" data-mcq="a" data-explain="La foto y el saludo se pueden copiar: no prueban nada.">Mail con foto real + saludo.</button>
+                                    <button class="choice" data-mcq="b" data-explain="Solo ver reduce daño: no permite cambios directos. Sigue siendo importante revisar quién tiene acceso.">Documento compartido “solo ver”.</button>
+                                    <button class="choice" data-mcq="c" data-explain="Correcto: link acortado oculta destino y “puede editar” permite modificar. Es una combinación típica de incidentes.">Enlace acortado + documento con “puede editar”.</button>
+                                </div>
+                            </div>
+
+                            <div class="mcq" data-correct="a">
+                                <p><b>2)</b> ¿Qué harías con el documento?</p>
+                                <div class="choices">
+                                    <button class="choice" data-mcq="a" data-explain="Correcto: lo primero es contener (cambiar permisos) y avisar por el canal institucional.">Avisar a un adulto referente y pedir que cambien permisos a “solo ver”.</button>
+                                    <button class="choice" data-mcq="b" data-explain="Editar puede borrar evidencia o agrandar el problema. Mejor contener y reportar.">Editar para “arreglarlo” yo.</button>
+                                    <button class="choice" data-mcq="c" data-explain="Compartir masivamente puede propagar el enlace y empeorar el incidente.">Compartirlo a todos “para que se enteren”.</button>
+                                </div>
+                            </div>
+
+                            <div class="mcq" data-correct="b">
+                                <p><b>3)</b> ¿Cómo verificarías si el mail es real?</p>
+                                <div class="choices">
+                                    <button class="choice" data-mcq="a" data-explain="Una foto no valida identidad. Se copia en segundos.">Por la foto de perfil.</button>
+                                    <button class="choice" data-mcq="b" data-explain="Correcto: verificación independiente (otro canal) es la defensa clave.">Confirmando por otro canal (hablar en Dirección / llamada / CREA oficial).</button>
+                                    <button class="choice" data-mcq="c" data-explain="Dar datos a un mail sospechoso es justo lo que busca el phishing.">Respondiendo con tus datos.</button>
+                                </div>
+                            </div>
+
+                            <div class="unlock" style="margin-top: 14px;">
+                                <button id="btn-check-casefinal-quiz" class="btn success">Verificar respuestas</button>
+                                <div id="casefinal-quiz-result" class="feedback" role="status" aria-live="polite"></div>
+                            </div>
+                        </div>
+
+                        <!-- Narrativa del caso (después del chequeo) -->
+                        <div class="casefinal-sim mission-narrative" style="margin: 20px 0;">
+                            <h3>Narrativa de misión</h3>
+                            <p class="muted">Alguien compartió un enlace “rápido” por Gmail y terminó dejando un documento con permisos peligrosos. Mirá la simulación y pensá: ¿qué harías vos en el INSTITUTO?</p>
+
+                            <div class="email-window" aria-label="Correo recibido">
+                                <div class="email-topbar">
+                                    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                                    <span class="email-app">Gmail</span>
+                                </div>
+                                <div class="email-card">
+                                    <div class="email-header">
+                                        <img src="directora.png" class="email-avatar" alt="Foto de perfil">
+                                        <div>
+                                            <div class="email-from"><b>Dirección</b> &lt;direccion.INSTITUTO@correo-uy.educ&gt;</div>
+                                            <div class="email-subject">Boletín 2026 – ver documento</div>
+                                            <div class="email-meta">Para: grupo • Hoy</div>
+                                        </div>
+                                    </div>
+                                    <div class="email-body">
+                                        <p>Buen día. Para agilizar, dejo el enlace al documento:</p>
+                                        <p><span class="fake-link">https://tinyurl.com/boletin-2026</span></p>
+                                        <p class="muted">(Responder solo si hay problemas.)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="wps-window" aria-label="Simulación de permisos de WPS" style="margin-top: 14px;">
+                                <div class="wps-topbar">
+                                    <span class="email-app">WPS – Compartir</span>
+                                </div>
+                                <div class="wps-card">
+                                    <p><b>Permisos actuales:</b> “Cualquiera con el enlace”</p>
+                                    <p><b>Acceso:</b> <span class="tag warn">Puede editar</span></p>
+                                    <p class="muted">Esto permite que cualquiera cambie el contenido (por ejemplo, borrar nombres, cambiar calificaciones, etc.).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="unlock">
+                        <label for="mission6-challenge-key">Clave final (se obtiene al aprobar el caso):</label>
+                        <input id="mission6-challenge-key" type="text" placeholder="Clave" />
+                        <button id="mission6-btn-submit" class="btn success">Desbloquear Firewall</button>
+                    </div>
+
+                    <div id="mission6-feedback" class="feedback" role="status" aria-live="polite"></div>
+                    <div class="footer-actions">
+                        <button class="btn secondary" data-target-screen="screen-map">Volver al mapa</button>
+                    </div>
+                </div>
+            </div>
+
+            
+</main>
+    </section>
+
+    <audio id="sfx-ok" src="audio/ok.mp3" preload="auto"></audio>
+    <audio id="sfx-error" src="audio/error.mp3" preload="auto"></audio>
+    <audio id="sfx-hover" src="audio/hover.mp3" preload="auto"></audio>
+    <audio id="sfx-click" src="audio/click.mp3" preload="auto"></audio>
+<div id="modal-overlay" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal-box">
+        <h3 id="modal-title">MENSAJE DEL SISTEMA</h3>
+        <div id="modal-body" class="modal-body-content">
+            </div>
+        <button id="modal-close-btn" class="btn primary">Entendido</button>
+    </div>
+</div>
+
+
+<script src="script.js"></script>
+</body>
+</html>

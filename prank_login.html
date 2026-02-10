@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingreso - Verificación rápida</title>
+    <!-- Sin dependencias externas: más compatible para abrir en cualquier entorno -->
+    <style>
+        :root {
+            --bg-color: #1a1a2e;
+            --text-color: #e0e0e0;
+            --primary: #ffeb3b; /* Amarillo para la alerta */
+            --error: #f44336; /* Rojo para el hackeo */
+            --success: #4caf50;
+            --dark-bg: #0f0f1b;
+        }
+
+        body {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            background-color: var(--dark-bg);
+            border: 3px solid var(--error);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(244, 67, 54, 0.5);
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .input-group label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            color: var(--primary);
+            font-size: 0.9em;
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid var(--error);
+            background-color: #333;
+            color: white;
+            border-radius: 6px;
+            resize: none;
+        }
+
+        .btn {
+            background-color: var(--error);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Pantalla de resultado (Chequeo) */
+        .result-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            background-color: var(--dark-bg);
+            border: 3px solid var(--success);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .result-screen h2 {
+            font-size: 2em;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(255, 235, 59, 0.6);
+        }
+
+        .mini-animation {
+            width: 100%;
+            background: #0b0b12;
+            border: 1px dashed rgba(255, 235, 59, 0.55);
+            border-radius: 10px;
+            padding: 14px;
+            text-align: left;
+            font-size: 0.95em;
+            line-height: 1.35;
+            position: relative;
+            overflow: hidden;
+        }
+        .mini-animation::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(244,67,54,0.14), transparent);
+            transform: translateX(-100%);
+            animation: sweep 2.2s infinite;
+        }
+        @keyframes sweep {
+            0% { transform: translateX(-120%); }
+            100% { transform: translateX(120%); }
+        }
+
+        .tip {
+            border: 2px solid var(--primary);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            text-align: justify;
+        }
+
+        .result-title{
+            font-size: 2em;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .result-lead{
+            font-size: 1.1em;
+            color: var(--primary);
+        }
+
+        .fake-anim{
+            width: 100%;
+            border: 2px dashed rgba(255,235,59,0.55);
+            border-radius: 10px;
+            padding: 14px;
+            background: rgba(255,255,255,0.04);
+            text-align: left;
+        }
+
+        .fake-anim .line{
+            opacity: .9;
+            margin: 6px 0;
+            animation: glitchLine 1.2s infinite;
+        }
+
+        .fake-anim .line:nth-child(2){ animation-delay: .12s; }
+        .fake-anim .line:nth-child(3){ animation-delay: .24s; }
+        .fake-anim .line:nth-child(4){ animation-delay: .36s; }
+
+        @keyframes glitchLine{
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(2px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA 1: LOGIN TRAMPA -->
+    <div id="phishing-form" class="login-container">
+        <form id="prank-form">
+            <div class="input-group">
+                <label for="nombre">Nombre (puede ser tu apodo):</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Ej: Majo / Fede / Sofi">
+            </div>
+
+            <div class="input-group">
+                <label for="cedula">Usuario CREA (solo para este ejercicio):</label>
+                <textarea id="cedula" name="cedula" rows="2" required placeholder="Ej: nombre.apellido (no uses datos reales si no querés)"></textarea>
+            </div>
+
+            <button type="submit" class="btn">Continuar</button>
+            <button type="button" id="btn-skip" class="btn" style="background:#444;margin-left:8px;">Saltar</button>
+        </form>
+    </div>
+
+    <!-- PANTALLA 2: RESULTADO DE LA BROMA -->
+    <div id="hack-result" class="result-screen">
+        <h2 class="result-title">Chequeo completado</h2>
+        
+        <p class="result-lead">Te mostramos esto porque se parece a algo que pasa de verdad.</p>
+        <p>Un formulario puede parecer “oficial”, pero si pide datos que no corresponden o mete urgencia, puede ser un engaño (phishing).</p>
+
+        <!-- Mini “animación” local (sin iframes externos) -->
+        <div class="fake-anim" aria-label="Animación del chequeo">
+            <div class="line">[SCAN] Analizando formulario…</div>
+            <div class="line">[ALERTA] Señales de urgencia detectadas.</div>
+            <div class="line">[ALERTA] Solicitud inusual de datos.</div>
+            <div class="line">[OK] Esto es un ejercicio controlado ✅</div>
+        </div>
+
+        <div class="tip mt-4 text-sm">
+            <p class="font-bold text-yellow-500 mb-2">💡 OJO: LECCIÓN APRENDIDA</p>
+            <p>
+                <strong>Atención con los QR que escaneás y los enlaces que abrís.</strong> 
+                Acabás de ser parte de un ejercicio de Ingeniería Social. 
+                En este entorno estás seguro/a, pero si ingresaste datos reales, 
+                recordá que <strong>nunca debés proporcionar información sensible</strong> 
+                sin verificar la fuente.
+            </p>
+        </div>
+
+        <button id="btn-start-game" class="btn" style="background:var(--success);">Entrar al Escape Room</button>
+    </div>
+
+    <script>
+        // Si ya pasó por esta pantalla, no repetimos la broma.
+        if (localStorage.getItem('INSTITUTO_prank_seen') === '1') {
+            window.location.replace('game.html');
+        }
+
+        const goGame = () => {
+            localStorage.setItem('INSTITUTO_prank_seen', '1');
+            window.location.replace('game.html');
+        };
+
+        document.getElementById('btn-skip')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            goGame();
+        });
+
+        document.getElementById('prank-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Ocultar la pantalla de phishing
+            document.getElementById('phishing-form').style.display = 'none';
+
+            // Marcar como visto (para no repetir)
+            localStorage.setItem('INSTITUTO_prank_seen', '1');
+
+            // Mostrar la pantalla de resultado
+            const resultScreen = document.getElementById('hack-result');
+            resultScreen.style.display = 'flex';
+        });
+
+        document.getElementById('btn-start-game').addEventListener('click', function() { goGame(); });
+    </script>
+</body>
+</html>
