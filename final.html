@@ -32,7 +32,52 @@
 
       <div id="final-hint" class="final-hint hidden" role="alert"></div>
 
-      <div id="suspect-cards" class="suspect-grid" aria-label="Selección de sospechoso"></div>
+      
+      <section id="evidence-summary" class="final-card">
+        <h3>📌 Resumen de evidencia</h3>
+        <p class="final-note">Estas son las pistas que fuiste juntando. No todas prueban “quién”, pero sí muestran <b>hábitos</b> que abren puertas.</p>
+        <ul id="evidence-list" class="evidence-list"></ul>
+      </section>
+
+      <section id="jury-section" class="final-card">
+        <h3>⚖️ El Gran Jurado de Objetos</h3>
+        <p class="final-note">
+          Antes de declarar el veredicto, escuchá al jurado. Cada objeto representa un concepto del entrenamiento y te tira una pista (con humor).
+        </p>
+
+        <div class="jury-head">
+          <img src="cerebro_digital.svg" class="jury-lead-img" alt="Cerebro Digital" />
+          <div class="jury-lead-text">
+            <p><b>[CEREBRO DIGITAL]</b> “He analizado tu Diario. Elegí el perfil que mejor explique lo que pasó en el INSTITUTO.”</p>
+            <p class="muted">Tip: tocá un sospechoso y mirá cómo reacciona el jurado.</p>
+          </div>
+        </div>
+
+        <div class="jury-grid" aria-label="Jurado de objetos">
+          <div class="jury-card">
+            <img src="gmail_obj.svg" alt="Gmail Parlante" />
+            <p class="jury-name">Sobre de Gmail</p>
+            <p id="jury-gmail" class="jury-line">Elegí un perfil para escuchar mi opinión.</p>
+          </div>
+          <div class="jury-card">
+            <img src="anzuelo_phishing.svg" alt="Anzuelo de Phishing" />
+            <p class="jury-name">Anzuelo Phishing</p>
+            <p id="jury-phishing" class="jury-line">Elegí un perfil para escuchar mi opinión.</p>
+          </div>
+          <div class="jury-card">
+            <img src="password_hercules.svg" alt="Contraseña Hércules" />
+            <p class="jury-name">Contraseña Hércules</p>
+            <p id="jury-password" class="jury-line">Elegí un perfil para escuchar mi opinión.</p>
+          </div>
+          <div class="jury-card">
+            <img src="documento_wps.svg" alt="Documento Compartido" />
+            <p class="jury-name">Documento compartido</p>
+            <p id="jury-doc" class="jury-line">Elegí un perfil para escuchar mi opinión.</p>
+          </div>
+        </div>
+      </section>
+
+<div id="suspect-cards" class="suspect-grid" aria-label="Selección de sospechoso"></div>
 
       <button id="btn-confirm-verdict" class="btn primary wide-btn" type="button">
         Confirmar veredicto
@@ -63,7 +108,8 @@
       </section>
 
       <section id="medal-section" class="final-card hidden">
-        <h3>🏅 Medalla — Súper Ciudadano Seguro</h3>
+        <h3>🏅 Certificación final</h3>
+        <p id="rango-usuario" class="rank-line"></p>
         <p class="final-note">Ingresá tu nombre y generá tu medalla. Se descarga como imagen (PNG).</p>
 
         <div class="medal-controls">
@@ -71,12 +117,15 @@
           <input id="player-name" class="medal-input" type="text" placeholder="Ej: Ana Pérez" maxlength="40" />
           <button id="btn-generate-medal" class="btn secondary" type="button">Generar medalla</button>
           <button id="btn-download-medal" class="btn primary hidden" type="button">Descargar PNG</button>
+          <button id="btn-print-certificate" class="btn ghost hidden" type="button">Imprimir / Guardar PDF</button>
           <div id="medal-msg" class="final-hint" aria-live="polite"></div>
         </div>
 
         <div class="medal-preview-wrap">
           <canvas id="medal-canvas" class="hidden" aria-hidden="true"></canvas>
+          <a id="medal-open-link" class="hidden" target="_blank" rel="noopener">
           <img id="medal-preview" class="hidden" alt="Vista previa de la medalla generada" />
+        </a>
         </div>
 
         <button id="btn-restart-training" class="btn ghost wide-btn" type="button">

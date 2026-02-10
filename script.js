@@ -11,12 +11,66 @@ const CLAVES = {
     caso_final: "VERIFICAR"
 };
 
-const SUSPECT_IMAGES = {
-    'Agente Vega': 'vega.png',
-    'Agente Leo': 'leo.png',
-    'Agente Kael': 'kael.png'
-};
 
+// Almacenamiento seguro (evita errores cuando localStorage está bloqueado)
+const SAFE_STORAGE = (() => {
+    try {
+        const testKey = '__storage_test__';
+        window.SAFE_STORAGE.setItem(testKey, '1');
+        window.SAFE_STORAGE.removeItem(testKey);
+        return window.localStorage;
+    } catch (e) {
+        const mem = {};
+        return {
+            getItem: (k) => (Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null),
+            setItem: (k, v) => { mem[k] = String(v); },
+            removeItem: (k) => { delete mem[k]; }
+        };
+    }
+})();
+const STATE_STORAGE_KEY = 'atlas_firewall_state';
+
+// Sospechosos (se eligen en Misión 2 y se usan en el veredicto final)
+const SUSPECTS = [
+    {
+        id: 'vega',
+        name: 'Agente Vega',
+        title: 'Perfil A — Eficiencia sobre protocolo',
+        short: 'Apuro + atajos: sesión abierta, claves guardadas, “después lo cierro”.',
+        img: 'suspect_a.svg'
+    },
+    {
+        id: 'leo',
+        name: 'Agente Leo',
+        title: 'Perfil B — Confianza institucional',
+        short: 'Cree en lo “oficial”: logo, firma, urgencia… y hace clic sin verificar.',
+        img: 'suspect_b.svg'
+    },
+    {
+        id: 'kael',
+        name: 'Agente Kael',
+        title: 'Perfil C — Colaboración sin límites',
+        short: 'Comparte de más: permisos abiertos, reenviar enlaces, “edición para cualquiera”.',
+        img: 'suspect_c.svg'
+    }
+];
+
+function getSuspectById(id){
+    return SUSPECTS.find(s => s.id === id) || null;
+}
+function getSuspectLabel(id){
+    const s = getSuspectById(id);
+    return s ? s.name : 'PENDIENTE';
+}
+
+function normalizeSuspectId(value){
+    if (!value) return null;
+    const v = String(value).trim().toLowerCase();
+    if (v === 'vega' || v === 'agente vega' || v === 'perfil a' || v === 'a') return 'vega';
+    if (v === 'leo' || v === 'agente leo' || v === 'perfil b' || v === 'b') return 'leo';
+    if (v === 'kael' || v === 'agente kael' || v === 'perfil c' || v === 'c') return 'kael';
+    return null;
+}
 const BOSS_VIDEOS = {
     "Dra. Vega": "ZbT5b0vhKEU",
     "Kai Byte": "9enczDlsgAU",
@@ -83,14 +137,18 @@ const COMPLETION_POINTS = 1000;
 function loadState() {
     const defaultState = {
         score: 0,
+        mistakes: 0,
         keys: { intro: false, hackers: false, credenciales: false, ing_social: false, iot: false, caso_final: false },
         suspect: null,
         final_suspect_choice: null,
         quiz: {}
     };
     try {
-        const stored = localStorage.getItem('atlas_firewall_state');
-        return stored ? Object.assign(defaultState, JSON.parse(stored)) : defaultState;
+        const stored = SAFE_STORAGE.getItem(STATE_STORAGE_KEY);
+        const state = stored ? Object.assign(defaultState, JSON.parse(stored)) : defaultState;
+        state.suspect = normalizeSuspectId(state.suspect);
+        state.final_suspect_choice = normalizeSuspectId(state.final_suspect_choice);
+        return state;
     } catch (e) {
         console.error("Error cargando estado:", e);
         return defaultState;
@@ -99,11 +157,94 @@ function loadState() {
 
 function saveState(state) {
     try {
-        localStorage.setItem('atlas_firewall_state', JSON.stringify(state));
+        SAFE_STORAGE.setItem(STATE_STORAGE_KEY, JSON.stringify(state));
     } catch (e) {
         console.error("Error guardando estado:", e);
     }
 }
+
+// =========================================================
+// Selector de sospechosos (mismo visor en Misión 2 y Final)
+// =========================================================
+function renderSuspectSelector(container, selectedId, disabled, onSelect, opts = {}) {
+    if (!container) return;
+    container.classList.add('suspect-grid');
+
+    const { showName = true, showProfile = true } = opts;
+
+    container.innerHTML = SUSPECTS.map(s => {
+        const isSel = selectedId === s.id;
+        const pressed = isSel ? 'true' : 'false';
+        const dis = disabled ? 'disabled' : '';
+        const label = showName ? `<div class="suspect-title">${s.name}</div>` : '';
+        const profile = showProfile ? `<div class="suspect-short"><b>${s.title}</b><br>${s.short}</div>` : `<div class="suspect-short">${s.short}</div>`;
+        return `
+            <button type="button" class="suspect-card suspect-option ${isSel ? 'selected' : ''}" data-suspect-id="${s.id}" aria-pressed="${pressed}" ${dis}>
+                <div class="suspect-photo"><img src="${s.img}" alt="${s.name}" loading="lazy"></div>
+                <div class="suspect-info">
+                    ${label}
+                    ${profile}
+                </div>
+            </button>
+        `;
+    }).join('');
+
+    container.querySelectorAll('button.suspect-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (disabled) return;
+            const id = btn.getAttribute('data-suspect-id');
+            if (!id) return;
+            onSelect?.(id);
+        });
+    });
+}
+
+function renderSuspectChoiceUI(state) {
+    const area = document.getElementById('suspect-choice-area');
+    const msg = document.getElementById('suspect-selection-message');
+    const confirmBtn = document.getElementById('btn-confirm-suspect');
+
+    if (!area) return;
+
+    // ¿Ya resolvió el chequeo rápido de la misión 2?
+    const challengeItems = document.querySelectorAll('#challenge-hackers .challenge-item');
+    const answered = challengeItems.length > 0 && Array.from(challengeItems).every(item => item.querySelector('.choice.picked'));
+
+    if (!answered) {
+        area.innerHTML = '';
+        if (confirmBtn) confirmBtn.classList.add('hidden');
+        if (msg) msg.textContent = 'Primero completá el “Chequeo rápido” (clasificar las situaciones). Eso habilita la elección de sospechoso.';
+        return;
+    }
+
+    const locked = !!(state.keys && state.keys.hackers);
+    renderSuspectSelector(area, state.suspect || null, locked, (id) => {
+        const cur = loadState();
+        cur.suspect = id;
+        saveState(cur);
+        updateHUD(cur);
+        // Re-render para marcar selección
+        renderSuspectChoiceUI(cur);
+    }, { showName: true, showProfile: true });
+
+    if (msg) {
+        if (locked) {
+            msg.innerHTML = `Sospechoso registrado: <b>${getSuspectLabel(state.suspect)}</b>. En el cierre podés cambiarlo si las pistas te hacen dudar.`;
+        } else {
+            msg.textContent = 'Elegí un sospechoso principal. Podés cambiarlo ahora, pero cuando confirmes, queda registrado.';
+        }
+    }
+
+    if (confirmBtn) {
+        if (locked) {
+            confirmBtn.classList.add('hidden');
+        } else {
+            confirmBtn.classList.toggle('hidden', !state.suspect);
+        }
+    }
+}
+
+
 
 
 // =========================================================
@@ -245,7 +386,7 @@ function updateHUD() {
     const hudKeys = document.getElementById('hud-keys');
     if (hudKeys) hudKeys.textContent = `${collectedKeys}/6`;
     const hudSuspect = document.getElementById('hud-suspect') || document.getElementById('hud-suspect-display');
-    if (hudSuspect) hudSuspect.textContent = `🔎 Sospechoso: ${state.suspect ? state.suspect.replace('Agente ', '') : 'PENDIENTE'}`;
+    if (hudSuspect) hudSuspect.textContent = `🔎 Sospechoso: ${state.suspect ? getSuspectLabel(state.suspect).replace('Agente ', '') : 'PENDIENTE'}`;
 
     updateMapFolders(state, collectedKeys);
 }
@@ -388,6 +529,7 @@ function updateScore(points) {
         setQuizUI('btn-check-m5-quiz','m5-quiz-result',`✅ Clave revelada: <b>${CLAVES.iot}</b>.`);
     }
 
+    if (points < 0) state.mistakes = (state.mistakes || 0) + 1;
     state.score = Math.max(0, state.score + points);
     saveState(state);
     updateHUD();
@@ -631,7 +773,7 @@ function handleMissionSubmitClick(missionId) {
                 isKeyCorrect = true;
                 updateScore(M2_SCORE_SELECT_SUSPECT); // Puntos por elegir sospechoso
                 modalTitle = "✅ SOSPECHOSO REGISTRADO";
-                feedbackMessage = `Misión 2 completada. Sospechoso: <strong>${state.suspect.replace('Agente ', '')}</strong>.<br><br>${BRIEF.hackers?.post_mission_concern || ''}`;
+                feedbackMessage = `Misión 2 completada. Sospechoso: <strong>${getSuspectLabel(state.suspect).replace('Agente ', '')}</strong>.<br><br>${BRIEF.hackers?.post_mission_concern || ''}`;
                 
                 // Bloquear la interfaz de selección de sospechosos
                 document.querySelectorAll('.suspect-option').forEach(btn => btn.style.pointerEvents = 'none');
@@ -1130,7 +1272,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Replay
     document.getElementById('btn-replay')?.addEventListener('click', () => {
-        localStorage.removeItem('atlas_firewall_state');
+        SAFE_STORAGE.removeItem(STATE_STORAGE_KEY);
         location.reload();
     });
 
@@ -1159,49 +1301,95 @@ document.addEventListener('DOMContentLoaded', () => {
 // FINAL (PÁGINA APARTE) — Operación "Aula Segura"
 // =========================================================
 
+
+
 function initFinalPage() {
-    const root = document.getElementById('final-page');
-    if (!root) return; // No estamos en final.html
+    // Solo corre en la página final
+    const body = document.body;
+    if (!body || body.dataset.page !== 'final') return;
 
     const state = loadState();
-    const collected = Object.values(state.keys || {}).filter(Boolean).length;
 
-    const lockedBox = document.getElementById('final-locked');
-    const unlockedBox = document.getElementById('final-unlocked');
+    const locked = document.getElementById('final-locked');
+    const unlocked = document.getElementById('final-unlocked');
+    const statusEl = document.getElementById('final-status');
 
-    if (collected < 6) {
-        if (lockedBox) lockedBox.classList.remove('hidden');
-        if (unlockedBox) unlockedBox.classList.add('hidden');
-        document.getElementById('go-back-map')?.addEventListener('click', () => {
-            window.location.href = './game.html';
-        });
-        return;
+    const needed = Object.keys(state.keys || {}).length;
+    const got = Object.values(state.keys || {}).filter(Boolean).length;
+    const isReady = got === needed;
+
+    if (statusEl) statusEl.textContent = `Progreso: ${got}/${needed} misiones completadas.`;
+
+    // Mostrar/ocultar paneles
+    if (locked) locked.classList.toggle('hidden', isReady);
+    if (unlocked) unlocked.classList.toggle('hidden', !isReady);
+
+    // Botón volver al mapa
+    document.getElementById('go-back-map')?.addEventListener('click', () => {
+        window.location.href = 'game.html';
+    });
+
+    // ======================
+    // Evidencia (resumen)
+    // ======================
+    const evidenceList = document.getElementById('evidence-list');
+    if (evidenceList) {
+        evidenceList.innerHTML = '';
+        const clues = (state.collectedClues || []).slice(-12); // últimas 12
+        if (!clues.length) {
+            evidenceList.innerHTML = '<li class="muted">Aún no hay pistas guardadas. Volvé al mapa y completá misiones.</li>';
+        } else {
+            clues.forEach((c) => {
+                const li = document.createElement('li');
+                li.innerHTML = c;
+                evidenceList.appendChild(li);
+            });
+        }
     }
 
-    if (lockedBox) lockedBox.classList.add('hidden');
-    if (unlockedBox) unlockedBox.classList.remove('hidden');
+    // ======================
+    // Jurado (reacciones)
+    // ======================
+    const juryEls = {
+        gmail: document.getElementById('jury-gmail'),
+        phishing: document.getElementById('jury-phishing'),
+        password: document.getElementById('jury-password'),
+        doc: document.getElementById('jury-doc')
+    };
 
-    const suspects = [
-        {
-            id: 'A',
-            title: 'Perfil A — Eficiencia sobre protocolo',
-            short: 'Apuro + atajos: sesión abierta, claves guardadas, “después lo cierro”.',
-            img: 'suspect_a.svg'
+    const JURY = {
+        vega: {
+            gmail: '“¡Yo soy Gmail! Cuando alguien deja la sesión abierta en una PC compartida… me convierto en una llave maestra.”',
+            phishing: '“Yo vivo de la urgencia. Pero en este caso, el problema empezó antes: con puertas abiertas.”',
+            password: '“Atajos y claves guardadas = músculos de gelatina. Una contraseña fuerte no sirve si la dejás expuesta.”',
+            doc: '“Si entran a tu cuenta, también entran a tus documentos. Primero se cuidan las llaves.”'
         },
-        {
-            id: 'B',
-            title: 'Perfil B — Confianza institucional',
-            short: 'Cree en lo “oficial”: logo, firma, urgencia… y hace clic sin verificar.',
-            img: 'suspect_b.svg'
+        leo: {
+            gmail: '“Si hacés clic sin mirar el remitente, me estás entregando tu bandeja de entrada en bandeja.”',
+            phishing: '“¡Ese soy yo! Logo + ‘URGENTE’ + enlace raro… y listo: caen por confianza.”',
+            password: '“Cuando reutilizan contraseñas o son fáciles, yo sufro. Y si no hay MFA, me dejan solo.”',
+            doc: '“Un clic mal dado puede terminar en permisos cambiados y documentos alterados.”'
         },
-        {
-            id: 'C',
-            title: 'Perfil C — Colaboración sin límites',
-            short: 'Comparte de más: permisos abiertos, reenviar enlaces, “edición para cualquiera”.',
-            img: 'suspect_c.svg'
+        kael: {
+            gmail: '“Reenviar enlaces sin verificar es como reenviar llaves. Después no sabés quién entró.”',
+            phishing: '“Mis trampas se vuelven más peligrosas cuando alguien las comparte ‘para ayudar’.”',
+            password: '“Podés tener una clave fuerte… pero si compartís todo en ‘edición para cualquiera’, me ignorás.”',
+            doc: '“¡Ay! ‘Cualquiera puede editar’ es música para mis pesadillas. Permisos mínimos, siempre.”'
         }
-    ];
+    };
 
+    function updateJury(choiceId) {
+        const data = JURY[choiceId];
+        if (!data) return;
+        if (juryEls.gmail) juryEls.gmail.textContent = data.gmail;
+        if (juryEls.phishing) juryEls.phishing.textContent = data.phishing;
+        if (juryEls.password) juryEls.password.textContent = data.password;
+        if (juryEls.doc) juryEls.doc.textContent = data.doc;
+    }
+
+    // ======================
+    // Selección de sospechoso
+    // ======================
     const cards = document.getElementById('suspect-cards');
     const hint = document.getElementById('final-hint');
     const confirmBtn = document.getElementById('btn-confirm-verdict');
@@ -1209,268 +1397,333 @@ function initFinalPage() {
     const verdictTitle = document.getElementById('verdict-title');
     const verdictBody = document.getElementById('verdict-body');
 
-    let choice = state.final_suspect_choice || null;
+    // La selección nace en Misión 2, pero acá se puede ajustar antes del veredicto
+    let choice = state.final_suspect_choice || state.suspect || null;
 
-    function renderCards() {
+    function renderSuspects() {
         if (!cards) return;
-        cards.innerHTML = '';
-        suspects.forEach(s => {
-            const card = document.createElement('button');
-            card.type = 'button';
-            card.className = 'suspect-card' + (choice === s.id ? ' selected' : '');
-            card.setAttribute('aria-pressed', choice === s.id ? 'true' : 'false');
-            card.dataset.suspectId = s.id;
-
-            card.innerHTML = `
-                <div class="suspect-photo">
-                    <img src="${s.img}" alt="Foto del ${s.title}" loading="lazy">
-                </div>
-                <div class="suspect-info">
-                    <div class="suspect-title">${s.title}</div>
-                    <div class="suspect-short">${s.short}</div>
-                </div>
-            `;
-
-            card.addEventListener('click', () => {
-                choice = s.id;
-                // Guardamos, pero NO pedimos justificación
-                const cur = loadState();
-                cur.final_suspect_choice = choice;
-                saveState(cur);
-
-                renderCards();
-                if (hint) hint.classList.add('hidden');
-            });
-
-            cards.appendChild(card);
-        });
+        renderSuspectSelector(cards, choice, false, (id) => {
+            choice = id;
+            const cur = loadState();
+            cur.final_suspect_choice = id;
+            saveState(cur);
+            if (hint) hint.classList.add('hidden');
+            updateJury(id);
+        }, { showName: true, showProfile: true });
     }
 
-    renderCards();
+    renderSuspects();
+    if (choice) updateJury(choice);
 
-    confirmBtn?.addEventListener('click', () => {
+    if (!confirmBtn) return;
+
+    confirmBtn.addEventListener('click', () => {
         if (!choice) {
             if (hint) {
-                hint.textContent = 'Elegí un perfil. Si cambiaste de idea, podés cambiarlo sin justificar. Antes de confirmar, leé las pistas.';
+                hint.textContent = 'Primero elegí un sospechoso. Podés cambiarlo sin justificar: leé las pistas y decidí.';
                 hint.classList.remove('hidden');
             }
             return;
         }
 
+        // Guardar veredicto
         const cur = loadState();
         cur.final_suspect_choice = choice;
+        cur.suspect = choice;
         saveState(cur);
 
-        // Bloqueamos selección visualmente (pero si querés permitir cambiar, quitar este bloque)
-        document.querySelectorAll('.suspect-card').forEach(btn => btn.setAttribute('disabled','disabled'));
+        // Bloquear selección
+        cards?.querySelectorAll('button').forEach(btn => btn.setAttribute('disabled', 'disabled'));
+        confirmBtn.setAttribute('disabled', 'disabled');
 
+        // Mostrar veredicto
         if (verdictArea) verdictArea.classList.remove('hidden');
 
-        const chosen = suspects.find(s => s.id === choice);
-        if (verdictTitle) verdictTitle.textContent = `Tu veredicto: ${chosen ? chosen.title : 'Perfil seleccionado'}`;
+        const chosen = getSuspectById(choice);
+        const chosenTitle = chosen ? `${chosen.name} (${chosen.title})` : 'Perfil seleccionado';
+        if (verdictTitle) verdictTitle.textContent = `Veredicto declarado: ${chosenTitle}`;
 
-        const whyNotSolo = {
-            A: `Si fuera “solo” el Perfil A, el daño habría quedado en una cuenta o una PC. Pero el ataque escaló porque también hubo clics impulsivos y permisos abiertos: sin eso, no se modificaba un documento clave ni se propagaba el caos.`,
-            B: `Si fuera “solo” el Perfil B, alguien podría caer en el correo… pero sin sesiones abiertas, contraseñas guardadas o permisos mal configurados, el atacante no habría tenido cómo avanzar ni sostener el acceso.`,
-            C: `Si fuera “solo” el Perfil C, compartir de más sería riesgoso… pero sin cuentas expuestas (sesiones/contraseñas) y sin phishing que multiplique víctimas, el ataque no habría tomado volumen ni velocidad.`
+        const confession = {
+            vega: {
+                who: 'Agente Vega',
+                confession: '“Sí… dejé la sesión abierta y guardé contraseñas para ahorrar tiempo. Pensé que era ‘solo un ratito’.”',
+                objImg: 'gmail_obj.svg',
+                objAlt: 'Gmail Parlante',
+                objLine: '“¡Yo soy Gmail! En una PC compartida, una sesión abierta equivale a entregar tu identidad. Cerrá sesión siempre.”'
+            },
+            leo: {
+                who: 'Agente Leo',
+                confession: '“Vi un correo con logo, urgencia y firma. Me apuré… y abrí el enlace sin verificar el dominio.”',
+                objImg: 'anzuelo_phishing.svg',
+                objAlt: 'Anzuelo de Phishing',
+                objLine: '“¡Yo soy Phishing! Mi truco favorito es la urgencia. Si te apuran, frená y verificá por otro canal.”'
+            },
+            kael: {
+                who: 'Agente Kael',
+                confession: '“Quise facilitar la colaboración: reenvié enlaces y dejé permisos abiertos. No medí el impacto.”',
+                objImg: 'documento_wps.svg',
+                objAlt: 'Documento Compartido',
+                objLine: '“¡Yo soy el Documento! ‘Cualquiera puede editar’ es invitar al caos. Usá permisos mínimos y editores específicos.”'
+            }
         };
 
-        const body = `
-            <p><b>Importante:</b> el entrenamiento terminó, pero el “culpable real” no es una sola persona. El caso muestra algo más incómodo: <b>la brecha ocurrió por una cadena de malos hábitos</b> que se fueron sumando.</p>
+        const pack = confession[choice] || confession.vega;
 
-            <p><b>Por qué NO es “solo” tu sospechoso:</b> ${whyNotSolo[choice] || 'Porque un solo eslabón no explica toda la cadena.'}</p>
+        const body = `
+            <p><b>Protocolo de finalización:</b> el entrenamiento terminó. Ahora declaramos un culpable… <b>sin justificar</b>. Leíste las pistas y elegiste el perfil que más te hizo ruido.</p>
 
             <div class="verdict-box">
-                <h4>✅ Culpables reales: hábitos que abren puertas</h4>
-                <ul>
-                    <li><b>Sesiones abiertas</b> en equipos compartidos (“vuelvo en 5 minutos”).</li>
-                    <li><b>Contraseñas guardadas</b> en el navegador y reutilizadas.</li>
-                    <li><b>Sin MFA</b> (doble verificación): una contraseña sola no alcanza.</li>
-                    <li><b>Clic sin verificar</b> cuando aparece urgencia/autoridad (phishing).</li>
-                    <li><b>Reenvíos</b> de enlaces “por ayudar” sin confirmar origen.</li>
-                    <li><b>Permisos abiertos</b> en documentos (“cualquiera puede editar”).</li>
-                    <li><b>Apps/dispositivos</b> con permisos excesivos o sin control.</li>
-                </ul>
+              <h4>🎭 Confesión (en clave pedagógica)</h4>
+              <p><b>${pack.who}</b> dice: ${pack.confession}</p>
+              <div class="obj-feedback">
+                <img src="${pack.objImg}" alt="${pack.objAlt}" class="obj-img" />
+                <p class="dialogo-pixar">${pack.objLine}</p>
+              </div>
             </div>
 
-            <p class="closing-line">Desde hoy, estás listo/a para actuar como <b>Agente Aula Segura</b> en tu INSTITUTO: detectar, frenar y corregir malos hábitos en el momento, sin culpar… pero sin dejar pasar.</p>
+            <p class="closing-line"><b>Giro del caso:</b> no fue “una persona”. El culpable real fue <b>la combinación de malos hábitos</b> que se fueron sumando.</p>
+
+            <div class="verdict-box">
+              <h4>🧠 Reglas de oro del INSTITUTO (lo que te llevás)</h4>
+              <ol class="rules-list">
+                <li><b>Cerrar sesión</b> y bloquear pantalla en equipos compartidos.</li>
+                <li><b>Contraseñas robustas</b> y únicas (y nunca guardarlas en PCs de préstamo).</li>
+                <li><b>MFA</b> activado: una contraseña sola no alcanza.</li>
+                <li><b>Phishing:</b> verificar remitente y enlaces; desconfiar de la urgencia.</li>
+                <li><b>Compartir con criterio:</b> permisos mínimos, editores específicos, y apps/dispositivos verificados.</li>
+              </ol>
+              <p class="muted">Conclusión: la seguridad se construye con capas. Si una falla, otra te salva.</p>
+            </div>
+
+            <p class="closing-line">Desde hoy, estás listo/a para actuar como <b>Agente Aula Segura</b> en tu INSTITUTO: detectar, frenar y corregir malos hábitos en el momento, con respeto… pero con firmeza.</p>
         `;
 
         if (verdictBody) verdictBody.innerHTML = body;
 
-        // Mostrar video + medalla al final del debrief
+        // Mostrar video + medalla (en orden)
         document.getElementById('final-video')?.classList.remove('hidden');
         document.getElementById('medal-section')?.classList.remove('hidden');
 
-        // Scroll a la sección de video para “cierre”
+        // Cargar video YT si corresponde
+        const iframe = document.getElementById('final-youtube-iframe');
+        const videoId = iframe?.dataset?.videoId;
+        if (iframe && videoId) {
+            iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        }
+
+        // Actualizar rango en base a puntaje
+        const rankEl = document.getElementById('rango-usuario');
+        const rank = getMedalRank(loadState());
+        if (rankEl) {
+            const info = getRankInfo(rank);
+            rankEl.textContent = `Rango: ${info.label} · Puntaje: ${loadState().score} · Errores: ${loadState().mistakes || 0}`;
+        }
+
+        // Scroll suave
         setTimeout(() => document.getElementById('final-video')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
     });
 
-    // Video YT (cambiar ID en final.html)
-    const iframe = document.getElementById('final-youtube-iframe');
-    const videoId = iframe?.dataset?.videoId;
-    if (iframe && videoId && !iframe.src) {
-        iframe.src = `https://www.youtube.com/embed/${videoId}`;
-    }
-
-    // Generador de medalla
+    // ======================
+    // Medalla (generador)
+    // ======================
     const nameInput = document.getElementById('player-name');
     const genBtn = document.getElementById('btn-generate-medal');
     const medalCanvas = document.getElementById('medal-canvas');
     const medalPreview = document.getElementById('medal-preview');
-    const dlBtn = document.getElementById('btn-download-medal');
-    const msg = document.getElementById('medal-msg');
+    const downloadBtn = document.getElementById('btn-download-medal');
+    const printBtn = document.getElementById('btn-print-certificate');
+    const medalMsg = document.getElementById('medal-msg');
+    const openLink = document.getElementById('medal-open-link');
 
-    function drawMedal(name) {
+    function loadImage(src) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error('No se pudo cargar ' + src));
+            img.src = src;
+        });
+    }
+
+    let basePromise = null;
+    function getBase() {
+        if (!basePromise) basePromise = loadImage('medalla_base.png');
+        return basePromise;
+    }
+
+    function drawRoundedRect(ctx, x, y, w, h, r) {
+        const radius = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + w, y, x + w, y + h, radius);
+        ctx.arcTo(x + w, y + h, x, y + h, radius);
+        ctx.arcTo(x, y + h, x, y, radius);
+        ctx.arcTo(x, y, x + w, y, radius);
+        ctx.closePath();
+    }
+
+    function getMedalRank(state) {
+        // Oro: alto puntaje y cero errores
+        const mistakes = state.mistakes || 0;
+        if (state.score >= 450 && mistakes === 0) return 'gold';
+        if (state.score >= 300) return 'silver';
+        return 'bronze';
+    }
+
+    function getRankInfo(rank) {
+        const map = {
+            gold: { label: 'Agente de Élite', badge: 'ORO', tint: 'rgba(255,215,0,0.18)' },
+            silver: { label: 'Agente Avanzado', badge: 'PLATA', tint: 'rgba(200,210,225,0.18)' },
+            bronze: { label: 'Agente en Entrenamiento', badge: 'BRONCE', tint: 'rgba(199,123,48,0.18)' }
+        };
+        return map[rank] || map.bronze;
+    }
+
+    async function generateMedal(nameRaw) {
         if (!medalCanvas) return null;
+        const base = await getBase();
 
-        const dpr = Math.max(1, window.devicePixelRatio || 1);
-        const size = 900;
-        medalCanvas.width = size * dpr;
-        medalCanvas.height = size * dpr;
-        medalCanvas.style.width = '300px';
-        medalCanvas.style.height = '300px';
+        const name = (nameRaw || '').trim().slice(0, 32);
+        if (!name) return null;
+
+        const stateNow = loadState();
+        const rank = getMedalRank(stateNow);
+        const info = getRankInfo(rank);
+
+        const extraH = 260;
+        medalCanvas.width = base.width;
+        medalCanvas.height = base.height + extraH;
 
         const ctx = medalCanvas.getContext('2d');
-        ctx.scale(dpr, dpr);
+        if (!ctx) return null;
 
         // Fondo
-        ctx.clearRect(0,0,size,size);
+        ctx.fillStyle = '#0f1020';
+        ctx.fillRect(0, 0, medalCanvas.width, medalCanvas.height);
 
-        // Cinta
-        ctx.fillStyle = '#1a1a2e';
-        ctx.fillRect(0, 0, size, size);
+        // Imagen base
+        ctx.drawImage(base, 0, 0);
 
-        // Cintas laterales
-        ctx.fillStyle = '#2d2d44';
-        ctx.fillRect(140, 80, 180, 300);
-        ctx.fillRect(580, 80, 180, 300);
-
-        // Medalla (círculo)
-        const cx = size/2, cy = 520, r = 260;
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI*2);
-        ctx.fillStyle = '#ffeb3b';
-        ctx.fill();
-
-        // Borde
-        ctx.lineWidth = 18;
-        ctx.strokeStyle = '#d4af37';
-        ctx.stroke();
-
-        // Estrella simple
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.fillStyle = '#1a1a2e';
-        ctx.beginPath();
-        const spikes = 5;
-        const outerRadius = 90;
-        const innerRadius = 40;
-        let rot = Math.PI / 2 * 3;
-        let x = 0;
-        let y = 0;
-        const step = Math.PI / spikes;
-        ctx.moveTo(0, -outerRadius);
-        for (let i = 0; i < spikes; i++) {
-            x = Math.cos(rot) * outerRadius;
-            y = Math.sin(rot) * outerRadius;
-            ctx.lineTo(x, y);
-            rot += step;
-
-            x = Math.cos(rot) * innerRadius;
-            y = Math.sin(rot) * innerRadius;
-            ctx.lineTo(x, y);
-            rot += step;
+        // Tinte leve por rango (para diferenciar)
+        if (info.tint) {
+            ctx.fillStyle = info.tint;
+            ctx.fillRect(0, 0, base.width, base.height);
         }
-        ctx.lineTo(0, -outerRadius);
-        ctx.closePath();
+
+        // Cinta de rango
+        const ribbonW = Math.floor(base.width * 0.30);
+        const ribbonH = Math.floor(base.height * 0.08);
+        const rx = Math.floor(base.width * 0.06);
+        const ry = Math.floor(base.height * 0.06);
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        drawRoundedRect(ctx, rx + 6, ry + 6, ribbonW, ribbonH, 22);
         ctx.fill();
+
+        ctx.fillStyle = 'rgba(255,255,255,0.10)';
+        drawRoundedRect(ctx, rx, ry, ribbonW, ribbonH, 22);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'left';
+        ctx.font = '800 44px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+        ctx.fillText(info.badge, rx + 26, ry + 58);
         ctx.restore();
 
+        // Placa inferior
+        const plaqueW = Math.floor(medalCanvas.width * 0.86);
+        const plaqueH = 185;
+        const plaqueX = Math.floor((medalCanvas.width - plaqueW) / 2);
+        const plaqueY = base.height + 35;
+
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        drawRoundedRect(ctx, plaqueX, plaqueY, plaqueW, plaqueH, 24);
+        ctx.fill();
+
         // Texto
-        ctx.fillStyle = '#1a1a2e';
-        ctx.font = 'bold 48px system-ui, -apple-system, Segoe UI, Roboto, Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('SÚPER CIUDADANO', cx, 420);
-        ctx.fillText('SEGURO', cx, 470);
+        ctx.fillStyle = '#ffffff';
 
-        // Nombre (wrap simple)
-        const safeName = (name || '').trim().slice(0, 28) || 'AGENTE';
-        ctx.font = 'bold 52px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText(safeName.toUpperCase(), cx, 645);
+        const upper = name.toUpperCase();
+        ctx.font = '700 56px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+        ctx.fillText(upper, medalCanvas.width / 2, plaqueY + 70);
 
-        ctx.font = '24px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('INSTITUTO — Operación "Aula Segura"', cx, 700);
+        ctx.font = '600 28px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+        ctx.fillText('SÚPER CIUDADANO SEGURO', medalCanvas.width / 2, plaqueY + 115);
 
-        // Fecha
-        const today = new Date();
-        const dateStr = today.toLocaleDateString('es-UY');
-        ctx.fillText(dateStr, cx, 735);
+        ctx.font = '600 22px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+        ctx.fillStyle = 'rgba(255,255,255,0.90)';
+        ctx.fillText(info.label, medalCanvas.width / 2, plaqueY + 150);
 
-        // Devuelve dataURL
+        ctx.font = '500 20px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+        ctx.fillStyle = 'rgba(255,255,255,0.70)';
+        ctx.fillText(`Operación “Aula Segura” · INSTITUTO · Puntaje ${stateNow.score}`, medalCanvas.width / 2, plaqueY + 175);
+
         return medalCanvas.toDataURL('image/png');
     }
 
-    function dataURLToBlob(dataURL) {
-        const parts = dataURL.split(',');
-        const mime = parts[0].match(/:(.*?);/)[1];
-        const bstr = atob(parts[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) u8arr[n] = bstr.charCodeAt(n);
-        return new Blob([u8arr], { type: mime });
+    async function dataUrlToBlobUrl(dataUrl) {
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        return URL.createObjectURL(blob);
     }
 
-    genBtn?.addEventListener('click', () => {
-        const name = nameInput?.value || '';
-        if (msg) msg.textContent = '';
-        const dataUrl = drawMedal(name);
-
-        if (!dataUrl) {
-            if (msg) msg.textContent = 'No se pudo generar la medalla en este dispositivo.';
-            return;
-        }
-
-        if (medalPreview) {
-            medalPreview.src = dataUrl;
-            medalPreview.classList.remove('hidden');
-        }
-
-        if (dlBtn) {
-            // Descarga robusta (evita popups bloqueados)
-            const blob = dataURLToBlob(dataUrl);
-            const url = URL.createObjectURL(blob);
-            dlBtn.dataset.blobUrl = url;
-            dlBtn.classList.remove('hidden');
-        }
-
-        const cur = loadState();
-        cur.player_name = name;
-        saveState(cur);
-    });
-
-    dlBtn?.addEventListener('click', () => {
-        const url = dlBtn.dataset.blobUrl;
-        if (!url) return;
+    function downloadBlobUrl(url, filename) {
         const a = document.createElement('a');
         a.href = url;
-        a.download = `medalla_super_ciudadano_seguro.png`;
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         a.remove();
-        setTimeout(() => {
-            try { URL.revokeObjectURL(url); } catch(_) {}
-            dlBtn.dataset.blobUrl = '';
-        }, 2500);
+    }
+
+    genBtn?.addEventListener('click', async () => {
+        if (!nameInput) return;
+        const name = nameInput.value;
+
+        if (medalMsg) medalMsg.textContent = '';
+
+        try {
+            const dataUrl = await generateMedal(name);
+            if (!dataUrl) {
+                if (medalMsg) medalMsg.textContent = 'Ingresá tu nombre para generar la medalla.';
+                return;
+            }
+
+            const blobUrl = await dataUrlToBlobUrl(dataUrl);
+
+            if (medalPreview) {
+                medalPreview.src = blobUrl;
+                medalPreview.classList.remove('hidden');
+            }
+            if (openLink) {
+                openLink.href = blobUrl;
+                openLink.classList.remove('hidden');
+            }
+            if (downloadBtn) {
+                downloadBtn.classList.remove('hidden');
+                downloadBtn.onclick = () => downloadBlobUrl(blobUrl, `medalla_aula_segura_${Date.now()}.png`);
+            }
+            if (printBtn) {
+                printBtn.classList.remove('hidden');
+                printBtn.onclick = () => window.print();
+            }
+
+            if (medalMsg) medalMsg.textContent = 'Medalla lista. Podés abrirla en una pestaña nueva o descargarla.';
+        } catch (e) {
+            console.error(e);
+            if (medalMsg) medalMsg.textContent = 'No pude generar la medalla en este navegador. Probá recargar la página.';
+        }
     });
 
+    // Reinicio (si existe el botón)
     document.getElementById('btn-restart-training')?.addEventListener('click', () => {
-        // Reset completo del entrenamiento
-        localStorage.removeItem('atlas_firewall_state');
-        localStorage.removeItem('INSTITUTO_prank_seen');
-        window.location.href = './index.html';
+        // Reiniciar estado
+        SAFE_STORAGE.removeItem(STATE_STORAGE_KEY);
+        window.location.href = 'index.html';
     });
 }
+
 
 // Ejecutar initFinalPage sin interferir con el juego
 document.addEventListener('DOMContentLoaded', () => {

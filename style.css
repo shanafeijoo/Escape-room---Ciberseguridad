@@ -1099,3 +1099,131 @@ h1, h2, h3 {
     right: 12px;
     z-index: 1200;
 }
+
+
+/* =========================
+   FINAL: Jurado + Veredicto
+   ========================= */
+.evidence-list{
+  margin: 12px 0 0;
+  padding-left: 20px;
+}
+.evidence-list li{ margin: 8px 0; }
+
+.jury-head{
+  display:flex;
+  gap:16px;
+  align-items:center;
+  margin: 14px 0 18px;
+}
+.jury-lead-img{
+  width: 86px;
+  height: 86px;
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+}
+.jury-lead-text p{ margin: 4px 0; }
+.muted{ opacity: 0.75; }
+
+.jury-grid{
+  display:grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.jury-card{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: 12px;
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+  min-height: 190px;
+}
+.jury-card img{
+  width: 78px;
+  height: 78px;
+  border-radius: 16px;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.30);
+}
+.jury-name{
+  font-weight: 800;
+  margin: 0;
+}
+.jury-line{
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.25rem;
+  opacity: 0.92;
+}
+
+.verdict-box{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 18px;
+  padding: 14px 14px;
+  margin: 14px 0;
+}
+.obj-feedback{
+  margin-top: 12px;
+  display:flex;
+  gap: 14px;
+  align-items: center;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  border-radius: 16px;
+  padding: 12px;
+}
+.obj-img{
+  width: 86px;
+  height: 86px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+}
+.dialogo-pixar{
+  margin: 0;
+  font-style: italic;
+  line-height: 1.25rem;
+}
+.rules-list{
+  margin: 10px 0 0;
+  padding-left: 20px;
+}
+.rules-list li{ margin: 8px 0; }
+
+.rank-line{
+  margin: 6px 0 0;
+  font-weight: 700;
+  opacity: 0.92;
+}
+
+.medal-animada{
+  width: 180px;
+  filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.55));
+  animation: floatingMedal 3s ease-in-out infinite;
+  margin: 20px 0;
+}
+@keyframes floatingMedal{
+  0%, 100%{ transform: translateY(0) rotate(0deg); }
+  50%{ transform: translateY(-10px) rotate(3deg); }
+}
+
+/* Responsive: jurado y veredicto */
+@media (max-width: 900px){
+  .jury-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px){
+  .jury-head{ flex-direction: column; align-items: flex-start; }
+  .jury-grid{ grid-template-columns: 1fr; }
+  .obj-feedback{ flex-direction: column; align-items: flex-start; }
+}
+
+/* =========================
+   Print certificate
+   ========================= */
+@media print{
+  header, nav, #btn-download-medal, #btn-generate-medal, #btn-print-certificate, #medal-open-link, .btn, .toast, .modal { display:none !important; }
+  body{ background:#fff !important; color:#000 !important; }
+  .final-card{ box-shadow:none !important; border: 1px solid #ddd !important; }
+  #medal-preview{ max-width: 520px !important; }
+}
